@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tire Log">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.svg">
+  <title>HPDE Tire Logger</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #21262d;
+      --text: #c9d1d9;
+      --text-muted: #8b949e;
+      --text-dim: #6e7681;
+      --blue: #58a6ff;
+      --purple: #a371f7;
+      --green: #3fb950;
+      --red: #f85149;
+      --orange: #e3b341;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      overscroll-behavior: none;
+    }
+
+    /* ---- VIEWS ---- */
+    .view { display: none; flex-direction: column; min-height: 100vh; }
+    .view.active { display: flex; }
+
+    /* ---- HEADER ---- */
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header h1 { font-size: 18px; font-weight: 600; color: var(--text); flex: 1; }
+    .header .subtitle { font-size: 13px; color: var(--text-muted); }
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--blue);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ---- SCROLLABLE CONTENT ---- */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 20px;
+    }
+
+    /* ---- BUTTONS ---- */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 50px;
+      transition: opacity 0.15s;
+    }
+    .btn:active { opacity: 0.7; }
+    .btn-primary { background: var(--blue); color: #0d1117; width: 100%; }
+    .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); width: 100%; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-success { background: var(--green); color: #0d1117; }
+    .btn-sm { font-size: 13px; padding: 8px 14px; min-height: 36px; border-radius: 8px; }
+
+    /* ---- CARDS ---- */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    /* ---- FORM ---- */
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 16px;
+      color: var(--text);
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      min-height: 48px;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--blue);
+    }
+    textarea { resize: none; min-height: 80px; font-family: inherit; }
+
+    /* ---- SEGMENT CONTROL ---- */
+    .segment {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .segment-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .segment-btn.active {
+      background: var(--blue);
+      color: #0d1117;
+    }
+
+    /* ---- HOME VIEW ---- */
+    .hero {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+    .hero-icon { font-size: 56px; margin-bottom: 12px; }
+    .hero h2 { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .hero p { font-size: 14px; color: var(--text-muted); }
+
+    .session-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color 0.15s;
+    }
+    .session-item:active { border-color: var(--blue); }
+    .session-item .si-main { flex: 1; min-width: 0; }
+    .session-item .si-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .session-item .si-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .session-item .si-badge {
+      background: var(--border);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .chevron { color: var(--text-dim); font-size: 14px; }
+
+    .section-header {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 20px 0 10px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+    .empty-state .es-icon { font-size: 36px; margin-bottom: 8px; }
+
+    /* ---- TIRE GRID ---- */
+    .tire-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .tire-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .tire-card:active { border-color: var(--blue); }
+    .tire-card.hot { border-color: #e3b341; }
+    .tire-card.cold { border-color: var(--blue); }
+    .tire-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .tire-psi {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+    .tire-psi.unset { color: var(--text-dim); }
+    .tire-target {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .tire-delta { font-size: 12px; font-weight: 600; margin-top: 4px; }
+    .tire-delta.pos { color: var(--orange); }
+    .tire-delta.neg { color: var(--blue); }
+    .tire-delta.ok { color: var(--green); }
+    .tire-state { font-size: 11px; margin-top: 6px; }
+    .tire-state.hot-badge { color: var(--orange); }
+    .tire-state.cold-badge { color: var(--blue); }
+
+    /* ---- TIRE ENTRY MODAL-STYLE PANEL ---- */
+    .tire-entry-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .tire-entry-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tire-entry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .hot-cold-toggle {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .hc-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .hc-btn.hot.active { background: var(--orange); color: #0d1117; }
+    .hc-btn.cold.active { background: var(--blue); color: #0d1117; }
+    .hc-btn:not(.active) { color: var(--text-muted); }
+
+    /* ---- HISTORY ---- */
+    .history-group { margin-bottom: 24px; }
+    .history-group-header {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--blue);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+    .log-entry {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .log-entry .le-main { flex: 1; min-width: 0; }
+    .log-entry .le-time { font-size: 12px; color: var(--text-muted); }
+    .log-entry .le-psi { font-size: 20px; font-weight: 700; color: var(--text); }
+    .log-entry .le-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ---- SUMMARY 2x2 ---- */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .summary-cell {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .summary-cell .sc-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+    .summary-cell .sc-psi { font-size: 36px; font-weight: 700; color: var(--text); }
+    .summary-cell .sc-target { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .summary-cell .sc-delta { font-size: 14px; font-weight: 600; margin-top: 4px; }
+
+    /* ---- TOAST ---- */
+    .toast {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #3fb950;
+      color: #0d1117;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 100;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ---- BOTTOM SAFE AREA ---- */
+    .bottom-pad { height: env(safe-area-inset-bottom, 20px); }
+
+    /* ---- MISC ---- */
+    .divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .row { display: flex; gap: 10px; }
+    .row .form-group { flex: 1; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-session { background: rgba(88,166,255,0.15); color: var(--blue); }
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--red);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .text-muted { color: var(--text-muted); }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-8 { margin-bottom: 8px; }
+    .flex { display: flex; align-items: center; }
+    .flex-between { display: flex; align-items: center; justify-content: space-between; }
+  </style>
+</head>
+<body>
+
+<!-- ==================== HOME VIEW ==================== -->
+<div id="view-home" class="view active">
+  <div class="header">
+    <div style="flex:1">
+      <h1>🏁 HPDE Tire Logger</h1>
+    </div>
+    <button class="btn btn-sm btn-secondary" onclick="App.exportCSV()" style="width:auto">Export CSV</button>
+  </div>
+  <div class="content">
+    <div class="hero">
+      <div class="hero-icon">🏎️</div>
+      <h2>Track Day Logger</h2>
+      <p>Log tire pressures for every session</p>
+    </div>
+    <button class="btn btn-primary" onclick="App.newSession()">
+      + New Session
+    </button>
+    <div id="home-sessions-section">
+      <div class="section-header">Recent Sessions</div>
+      <div id="home-sessions-list">
+        <div class="empty-state"><div class="es-icon">📋</div>No sessions yet</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+
+<!-- ==================== NEW SESSION VIEW ==================== -->
+<div id="view-new-session" class="view">
+  <div class="header">
+    <button class="back-btn" onclick="App.goHome()">‹ Back</button>
+    <h1>New Session</h1>
+  </div>
+  <div class="content">
+    <div class="form-group">
+      <label>Event Name</label>
+      <input type="text" id="ns-event" placeholder="e.g. NCM Motorsports Apr 2026">
+    </div>
+    <div class="form-group">
+      <label>Track Name</label>
+      <input type="text" id="ns-track" placeholder="e.g. NCM Motorsports Park">
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label>Session Type</label>
+        <select id="ns-type">
+          <option>Practice</option>
+          <option>Hot Lap</option>
+          <option>Qualifying</option>
+          <option>Race</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Session #</label>
+        <input type="number" id="ns-num" value="1" min="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Car / Setup Notes</label>
+      <textarea id="ns-notes" placeholder="e.g. Stock setup, cold tires, 72°F ambient"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="App.createSession()">Start Session →</button>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+
+<!-- ==================== SESSION VIEW ==================== -->
+<div id="view-session" class="view">
+  <div class="header">
+    <button class="back-btn" onclick="App.goHome()">‹ Back</button>
+    <div style="flex:1">
+      <h1 id="sess-title">Session</h1>
+      <div class="subtitle" id="sess-subtitle"></div>
+    </div>
+    <button class="btn btn-sm btn-secondary" onclick="App.showSummary()" style="width:auto">Summary</button>
+  </div>
+  <div class="content">
+    <!-- Tire Grid Overview -->
+    <div class="card-title">Current Readings</div>
+    <div class="tire-grid">
+      <div class="tire-card" id="tc-FL" onclick="App.openTireEntry('FL')">
+        <div class="tire-label">⬅️ Front Left</div>
+        <div class="tire-psi unset" id="tc-FL-psi">—</div>
+        <div class="tire-target" id="tc-FL-target"></div>
+        <div class="tire-delta" id="tc-FL-delta"></div>
+        <div class="tire-state" id="tc-FL-state"></div>
+      </div>
+      <div class="tire-card" id="tc-FR" onclick="App.openTireEntry('FR')">
+        <div class="tire-label">Front Right ➡️</div>
+        <div class="tire-psi unset" id="tc-FR-psi">—</div>
+        <div class="tire-target" id="tc-FR-target"></div>
+        <div class="tire-delta" id="tc-FR-delta"></div>
+        <div class="tire-state" id="tc-FR-state"></div>
+      </div>
+      <div class="tire-card" id="tc-RL" onclick="App.openTireEntry('RL')">
+        <div class="tire-label">⬅️ Rear Left</div>
+        <div class="tire-psi unset" id="tc-RL-psi">—</div>
+        <div class="tire-target" id="tc-RL-target"></div>
+        <div class="tire-delta" id="tc-RL-delta"></div>
+        <div class="tire-state" id="tc-RL-state"></div>
+      </div>
+      <div class="tire-card" id="tc-RR" onclick="App.openTireEntry('RR')">
+        <div class="tire-label">Rear Right ➡️</div>
+        <div class="tire-psi unset" id="tc-RR-psi">—</div>
+        <div class="tire-target" id="tc-RR-target"></div>
+        <div class="tire-delta" id="tc-RR-delta"></div>
+        <div class="tire-state" id="tc-RR-state"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="card-title">Log Entry</div>
+
+    <!-- Tire Entry Panels -->
+    <div id="tire-entries">
+      <!-- FL -->
+      <div class="tire-entry-panel">
+        <div class="tire-entry-title"><span>⬅️ Front Left (FL)</span></div>
+        <div class="tire-entry-grid">
+          <div class="form-group mb-8">
+            <label>Actual PSI</label>
+            <input type="number" id="psi-FL" step="0.5" min="0" max="60" placeholder="32.0" oninput="App.updateTirePreview('FL')">
+          </div>
+          <div class="form-group mb-8">
+            <label>Target PSI</label>
+            <input type="number" id="tgt-FL" step="0.5" min="0" max="60" placeholder="32.0" oninput="App.updateTirePreview('FL')">
+          </div>
+        </div>
+        <div class="form-group mb-8">
+          <label>Tire State</label>
+          <div class="hot-cold-toggle">
+            <button class="hc-btn cold active" id="hc-FL-cold" onclick="App.setHotCold('FL','cold')">❄️ Cold</button>
+            <button class="hc-btn hot" id="hc-FL-hot" onclick="App.setHotCold('FL','hot')">🔥 Hot</button>
+          </div>
+        </div>
+        <div class="form-group mb-8">
+          <label>Notes</label>
+          <input type="text" id="note-FL" placeholder="e.g. slight cupping">
+        </div>
+      </div>
+
+      <!-- FR -->
+      <div class="tire-entry-panel">
+        <div class="tire-entry-title"><span>Front Right (FR) ➡️</span></div>
+        <div class="tire-entry-grid">
+          <div class="form-group mb-8">
+            <label>Actual PSI</label>
+            <input type="number" id="psi-FR" step="0.5" min="0" max="60" placeholder="32.0" oninput="App.updateTirePreview('FR')">
+          </div>
+          <div class="form-group mb-8">
+            <label>Target PSI</label>
+            <input type="number" id="tgt-FR" step="0.5" min="0" max="60" placeholder="32.0" oninput="App.updateTirePreview('FR')">
+          </div>
+        </div>
+        <div class="form-group mb-8">
+          <label>Tire State</label>
+          <div class="hot-cold-toggle">
+            <button class="hc-btn cold active" id="hc-FR-cold" onclick="App.setHotCold('FR','cold')">❄️ Cold</button>
+            <button class="hc-btn hot" id="hc-FR-hot" onclick="App.setHotCold('FR','hot')">🔥 Hot</button>
+          </div>
+        </div>
+        <div class="form-group mb-8">
+          <label>Notes</label>
+          <input type="text" id="note-FR" placeholder="e.g. slight cupping">
+        </div>
+      </div>
+
+      <!-- RL -->
+      <div class="tire-entry-panel">
+        <div class="tire-entry-title"><span>⬅️ Rear Left (RL)</span></div>
+        <div class="tire-entry-grid">
+          <div class="form-group mb-8">
+            <label>Actual PSI</label>
+            <input type="number" id="psi-RL" step="0.5" min="0" max="60" placeholder="32.0" oninput="App.updateTirePreview('RL')">
+          </div>
+          <div class="form-group mb-8">
+            <label>Target PSI</label>
+            <input type="number" id="tgt-RL" step="0.5" min="0" max="60" placeholder="32.0" oninput="App.updateTirePreview('RL')">
+          </div>
+        </div>
+        <div class="form-group mb-8">
+          <label>Tire State</label>
+          <div class="hot-cold-toggle">
+            <button class="hc-btn cold active" id="hc-RL-cold" onclick="App.setHotCold('RL','cold')">❄️ Cold</button>
+            <button class="hc-btn hot" id="hc-RL-hot" onclick="App.setHotCold('RL','hot')">🔥 Hot</button>
+          </div>
+        </div>
+        <div class="form-group mb-8">
+          <label>Notes</label>
+          <input type="text" id="note-RL" placeholder="">
+        </div>
+      </div>
+
+      <!-- RR -->
+      <div class="tire-entry-panel">
+        <div class="tire-entry-title"><span>Rear Right (RR) ➡️</span></div>
+        <div class="tire-entry-grid">
+          <div class="form-group mb-8">
+            <label>Actual PSI</label>
+            <input type="number" id="psi-RR" step="0.5" min="0" max="60" placeholder="32.0" oninput="App.updateTirePreview('RR')">
+          </div>
+          <div class="form-group mb-8">
+            <label>Target PSI</label>
+            <input type="number" id="tgt-RR" step="0.5" min="0" max="60" placeholder="32.0" oninput="App.updateTirePreview('RR')">
+          </div>
+        </div>
+        <div class="form-group mb-8">
+          <label>Tire State</label>
+          <div class="hot-cold-toggle">
+            <button class="hc-btn cold active" id="hc-RR-cold" onclick="App.setHotCold('RR','cold')">❄️ Cold</button>
+            <button class="hc-btn hot" id="hc-RR-hot" onclick="App.setHotCold('RR','hot')">🔥 Hot</button>
+          </div>
+        </div>
+        <div class="form-group mb-8">
+          <label>Notes</label>
+          <input type="text" id="note-RR" placeholder="">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Ambient Temp (°F) — optional</label>
+      <input type="number" id="ambient-temp" placeholder="72">
+    </div>
+
+    <button class="btn btn-primary" style="margin-top: 8px" onclick="App.logAllTires()">
+      💾 Log All 4 Tires
+    </button>
+
+    <div class="divider"></div>
+    <div class="flex-between" style="margin-bottom: 10px;">
+      <div class="card-title" style="margin:0">Entry History</div>
+      <span id="sess-entry-count" style="font-size:12px;color:var(--text-muted)"></span>
+    </div>
+    <div id="sess-history"></div>
+
+    <div class="divider"></div>
+    <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red)" onclick="App.deleteSession()">
+      🗑️ Delete Session
+    </button>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+
+<!-- ==================== SUMMARY VIEW ==================== -->
+<div id="view-summary" class="view">
+  <div class="header">
+    <button class="back-btn" onclick="App.showView('view-session')">‹ Back</button>
+    <h1>Session Summary</h1>
+  </div>
+  <div class="content">
+    <div id="summary-content"></div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+
+<!-- ==================== HISTORY VIEW ==================== -->
+<div id="view-history" class="view">
+  <div class="header">
+    <button class="back-btn" onclick="App.goHome()">‹ Back</button>
+    <h1>History</h1>
+  </div>
+  <div class="content">
+    <div id="history-content"></div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================
+// DATA MODEL
+// =====================================================
+// Session: { id, event, track, type, num, notes, createdAt }
+// Entry: { id, sessionId, timestamp, wheel, psi, target, state, note, ambientTemp }
+
+const DB = {
+  getSessions() {
+    return JSON.parse(localStorage.getItem('hpde_sessions') || '[]');
+  },
+  saveSessions(sessions) {
+    localStorage.setItem('hpde_sessions', JSON.stringify(sessions));
+  },
+  getEntries() {
+    return JSON.parse(localStorage.getItem('hpde_entries') || '[]');
+  },
+  saveEntries(entries) {
+    localStorage.setItem('hpde_entries', JSON.stringify(entries));
+  },
+  addSession(session) {
+    const sessions = this.getSessions();
+    sessions.unshift(session);
+    this.saveSessions(sessions);
+  },
+  addEntry(entry) {
+    const entries = this.getEntries();
+    entries.push(entry);
+    this.saveEntries(entries);
+  },
+  deleteSession(id) {
+    const sessions = this.getSessions().filter(s => s.id !== id);
+    this.saveSessions(sessions);
+    const entries = this.getEntries().filter(e => e.sessionId !== id);
+    this.saveEntries(entries);
+  },
+  deleteEntry(id) {
+    const entries = this.getEntries().filter(e => e.id !== id);
+    this.saveEntries(entries);
+  },
+  getSessionEntries(sessionId) {
+    return this.getEntries().filter(e => e.sessionId === sessionId);
+  }
+};
+
+// =====================================================
+// APP CONTROLLER
+// =====================================================
+const App = {
+  currentSessionId: null,
+  hotColdState: { FL: 'cold', FR: 'cold', RL: 'cold', RR: 'cold' },
+
+  // ----- NAVIGATION -----
+  showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  },
+
+  goHome() {
+    this.currentSessionId = null;
+    this.renderHome();
+    this.showView('view-home');
+  },
+
+  // ----- HOME -----
+  renderHome() {
+    const sessions = DB.getSessions();
+    const list = document.getElementById('home-sessions-list');
+    if (!sessions.length) {
+      list.innerHTML = '<div class="empty-state"><div class="es-icon">📋</div>No sessions yet.<br>Tap "New Session" to get started.</div>';
+      return;
+    }
+    const entries = DB.getEntries();
+    list.innerHTML = sessions.map(s => {
+      const count = entries.filter(e => e.sessionId === s.id).length;
+      const date = new Date(s.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return `<div class="session-item" onclick="App.openSession('${s.id}')">
+        <div class="si-main">
+          <div class="si-title">${esc(s.event || s.track || 'Session')}</div>
+          <div class="si-sub">${esc(s.track)} · ${esc(s.type)} #${s.num} · ${date}</div>
+        </div>
+        <span class="si-badge">${Math.round(count / 4)} log${count !== 4 ? 's' : ''}</span>
+        <span class="chevron">›</span>
+      </div>`;
+    }).join('');
+  },
+
+  // ----- NEW SESSION -----
+  newSession() {
+    document.getElementById('ns-event').value = '';
+    document.getElementById('ns-track').value = '';
+    document.getElementById('ns-type').value = 'Practice';
+    document.getElementById('ns-num').value = '1';
+    document.getElementById('ns-notes').value = '';
+    this.showView('view-new-session');
+  },
+
+  createSession() {
+    const event = document.getElementById('ns-event').value.trim();
+    const track = document.getElementById('ns-track').value.trim();
+    if (!event && !track) {
+      alert('Please enter an event name or track name.');
+      return;
+    }
+    const session = {
+      id: 'sess_' + Date.now(),
+      event,
+      track,
+      type: document.getElementById('ns-type').value,
+      num: parseInt(document.getElementById('ns-num').value) || 1,
+      notes: document.getElementById('ns-notes').value.trim(),
+      createdAt: new Date().toISOString()
+    };
+    DB.addSession(session);
+    this.openSession(session.id);
+  },
+
+  // ----- SESSION -----
+  openSession(id) {
+    this.currentSessionId = id;
+    const sessions = DB.getSessions();
+    const session = sessions.find(s => s.id === id);
+    if (!session) { this.goHome(); return; }
+
+    document.getElementById('sess-title').textContent = session.event || session.track || 'Session';
+    document.getElementById('sess-subtitle').textContent =
+      `${session.track ? session.track + ' · ' : ''}${session.type} #${session.num}`;
+
+    // Reset form
+    ['FL','FR','RL','RR'].forEach(w => {
+      document.getElementById('psi-' + w).value = '';
+      document.getElementById('tgt-' + w).value = '';
+      document.getElementById('note-' + w).value = '';
+      this.setHotCold(w, 'cold');
+    });
+    document.getElementById('ambient-temp').value = '';
+
+    this.refreshTireGrid();
+    this.renderSessionHistory();
+    this.showView('view-session');
+  },
+
+  refreshTireGrid() {
+    const entries = DB.getSessionEntries(this.currentSessionId);
+    ['FL','FR','RL','RR'].forEach(wheel => {
+      const wheelEntries = entries.filter(e => e.wheel === wheel);
+      const last = wheelEntries[wheelEntries.length - 1];
+      const psiEl = document.getElementById('tc-' + wheel + '-psi');
+      const tgtEl = document.getElementById('tc-' + wheel + '-target');
+      const deltaEl = document.getElementById('tc-' + wheel + '-delta');
+      const stateEl = document.getElementById('tc-' + wheel + '-state');
+      const card = document.getElementById('tc-' + wheel);
+
+      if (last) {
+        psiEl.textContent = last.psi + ' PSI';
+        psiEl.classList.remove('unset');
+        card.classList.remove('hot','cold');
+        card.classList.add(last.state);
+
+        if (last.target) {
+          tgtEl.textContent = 'Target: ' + last.target + ' PSI';
+          const delta = parseFloat((last.psi - last.target).toFixed(1));
+          deltaEl.textContent = (delta > 0 ? '+' : '') + delta + ' PSI';
+          deltaEl.className = 'tire-delta ' + (Math.abs(delta) <= 0.5 ? 'ok' : delta > 0 ? 'pos' : 'neg');
+        } else {
+          tgtEl.textContent = '';
+          deltaEl.textContent = '';
+        }
+        stateEl.textContent = last.state === 'hot' ? '🔥 Hot' : '❄️ Cold';
+        stateEl.className = 'tire-state ' + last.state + '-badge';
+      } else {
+        psiEl.textContent = '—';
+        psiEl.classList.add('unset');
+        tgtEl.textContent = '';
+        deltaEl.textContent = '';
+        stateEl.textContent = '';
+        card.classList.remove('hot','cold');
+      }
+    });
+  },
+
+  renderSessionHistory() {
+    const entries = DB.getSessionEntries(this.currentSessionId);
+    const container = document.getElementById('sess-history');
+    const countEl = document.getElementById('sess-entry-count');
+
+    // Group by log batch (entries logged at same time = within 2s)
+    countEl.textContent = entries.length + ' reading' + (entries.length !== 1 ? 's' : '');
+
+    if (!entries.length) {
+      container.innerHTML = '<div class="empty-state" style="padding:16px 0"><div class="es-icon">📊</div>No readings logged yet</div>';
+      return;
+    }
+
+    const sorted = [...entries].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    container.innerHTML = sorted.map(e => {
+      const time = new Date(e.timestamp).toLocaleString('en-US', {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+      });
+      const delta = e.target ? parseFloat((e.psi - e.target).toFixed(1)) : null;
+      return `<div class="log-entry">
+        <div style="font-size:20px">${e.wheel === 'FL' ? '↖️' : e.wheel === 'FR' ? '↗️' : e.wheel === 'RL' ? '↙️' : '↘️'}</div>
+        <div class="le-main">
+          <div class="le-psi">${e.psi} PSI <span style="font-size:13px;color:var(--text-muted);font-weight:400">${e.wheel}</span></div>
+          <div class="le-meta">${time} · ${e.state === 'hot' ? '🔥 Hot' : '❄️ Cold'}${e.target ? ' · Target: ' + e.target : ''}${delta !== null ? ' · Δ' + (delta > 0 ? '+' : '') + delta : ''}${e.ambientTemp ? ' · ' + e.ambientTemp + '°F' : ''}</div>
+          ${e.note ? '<div class="le-meta" style="color:var(--text-muted)">' + esc(e.note) + '</div>' : ''}
+        </div>
+        <button class="delete-btn" onclick="App.deleteEntry('${e.id}')">×</button>
+      </div>`;
+    }).join('');
+  },
+
+  // ----- HOT/COLD TOGGLE -----
+  setHotCold(wheel, state) {
+    this.hotColdState[wheel] = state;
+    ['hot','cold'].forEach(s => {
+      const btn = document.getElementById('hc-' + wheel + '-' + s);
+      btn.classList.toggle('active', s === state);
+    });
+  },
+
+  // ----- TIRE PREVIEW -----
+  updateTirePreview(wheel) {
+    const psi = parseFloat(document.getElementById('psi-' + wheel).value);
+    const target = parseFloat(document.getElementById('tgt-' + wheel).value);
+    const psiEl = document.getElementById('tc-' + wheel + '-psi');
+    const tgtEl = document.getElementById('tc-' + wheel + '-target');
+    const deltaEl = document.getElementById('tc-' + wheel + '-delta');
+
+    if (!isNaN(psi)) {
+      psiEl.textContent = psi + ' PSI';
+      psiEl.classList.remove('unset');
+    }
+    if (!isNaN(target)) {
+      tgtEl.textContent = 'Target: ' + target + ' PSI';
+    }
+    if (!isNaN(psi) && !isNaN(target)) {
+      const delta = parseFloat((psi - target).toFixed(1));
+      deltaEl.textContent = (delta > 0 ? '+' : '') + delta + ' PSI';
+      deltaEl.className = 'tire-delta ' + (Math.abs(delta) <= 0.5 ? 'ok' : delta > 0 ? 'pos' : 'neg');
+    }
+  },
+
+  openTireEntry(wheel) {
+    // Scroll to the relevant panel
+    const panels = document.querySelectorAll('.tire-entry-panel');
+    const idx = ['FL','FR','RL','RR'].indexOf(wheel);
+    if (panels[idx]) {
+      panels[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('psi-' + wheel).focus();
+    }
+  },
+
+  // ----- LOG -----
+  logAllTires() {
+    const wheels = ['FL','FR','RL','RR'];
+    const ambientTemp = document.getElementById('ambient-temp').value;
+    const now = new Date().toISOString();
+    let logged = 0;
+
+    wheels.forEach(wheel => {
+      const psiVal = document.getElementById('psi-' + wheel).value;
+      const psi = parseFloat(psiVal);
+      if (isNaN(psi) || psiVal === '') return;
+
+      const target = parseFloat(document.getElementById('tgt-' + wheel).value) || null;
+      const note = document.getElementById('note-' + wheel).value.trim();
+      const state = this.hotColdState[wheel];
+
+      DB.addEntry({
+        id: 'e_' + Date.now() + '_' + wheel,
+        sessionId: this.currentSessionId,
+        timestamp: now,
+        wheel,
+        psi,
+        target,
+        state,
+        note,
+        ambientTemp: ambientTemp ? parseFloat(ambientTemp) : null
+      });
+      logged++;
+    });
+
+    if (!logged) {
+      alert('Please enter at least one tire pressure.');
+      return;
+    }
+
+    // Clear inputs
+    wheels.forEach(w => {
+      document.getElementById('psi-' + w).value = '';
+      document.getElementById('tgt-' + w).value = '';
+      document.getElementById('note-' + w).value = '';
+    });
+    document.getElementById('ambient-temp').value = '';
+
+    this.refreshTireGrid();
+    this.renderSessionHistory();
+    this.toast(`✅ Logged ${logged} tire${logged !== 1 ? 's' : ''} — ${new Date().toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'})}`);
+  },
+
+  logTire(wheel) {
+    const psiVal = document.getElementById('psi-' + wheel).value;
+    const psi = parseFloat(psiVal);
+    if (isNaN(psi) || psiVal === '') {
+      alert(`Enter PSI for ${wheel}`);
+      return;
+    }
+    const target = parseFloat(document.getElementById('tgt-' + wheel).value) || null;
+    const note = document.getElementById('note-' + wheel).value.trim();
+    const state = this.hotColdState[wheel];
+    const ambientTemp = document.getElementById('ambient-temp').value;
+
+    DB.addEntry({
+      id: 'e_' + Date.now() + '_' + wheel,
+      sessionId: this.currentSessionId,
+      timestamp: new Date().toISOString(),
+      wheel,
+      psi,
+      target,
+      state,
+      note,
+      ambientTemp: ambientTemp ? parseFloat(ambientTemp) : null
+    });
+
+    document.getElementById('psi-' + wheel).value = '';
+    document.getElementById('tgt-' + wheel).value = '';
+    document.getElementById('note-' + wheel).value = '';
+
+    this.refreshTireGrid();
+    this.renderSessionHistory();
+    this.toast(`✅ ${wheel} logged: ${psi} PSI`);
+  },
+
+  deleteEntry(id) {
+    if (!confirm('Delete this reading?')) return;
+    DB.deleteEntry(id);
+    this.refreshTireGrid();
+    this.renderSessionHistory();
+    this.toast('🗑️ Reading deleted');
+  },
+
+  deleteSession() {
+    if (!confirm('Delete this entire session and all its readings? This cannot be undone.')) return;
+    DB.deleteSession(this.currentSessionId);
+    this.goHome();
+    this.toast('🗑️ Session deleted');
+  },
+
+  // ----- SUMMARY -----
+  showSummary() {
+    const session = DB.getSessions().find(s => s.id === this.currentSessionId);
+    const entries = DB.getSessionEntries(this.currentSessionId);
+
+    const getLastForWheel = (wheel) => {
+      const we = entries.filter(e => e.wheel === wheel);
+      return we[we.length - 1] || null;
+    };
+
+    const wheels = ['FL','FR','RL','RR'];
+    const labels = { FL: '⬅️ Front Left', FR: 'Front Right ➡️', RL: '⬅️ Rear Left', RR: 'Rear Right ➡️' };
+
+    const summaryGrid = wheels.map(w => {
+      const e = getLastForWheel(w);
+      const delta = e && e.target ? parseFloat((e.psi - e.target).toFixed(1)) : null;
+      const deltaClass = delta === null ? '' : Math.abs(delta) <= 0.5 ? 'ok' : delta > 0 ? 'pos' : 'neg';
+      return `<div class="summary-cell">
+        <div class="sc-label">${labels[w]}</div>
+        <div class="sc-psi">${e ? e.psi : '—'}</div>
+        <div class="sc-target">${e && e.target ? 'Target: ' + e.target + ' PSI' : 'No target set'}</div>
+        ${delta !== null ? `<div class="sc-delta tire-delta ${deltaClass}">${delta > 0 ? '+' : ''}${delta} PSI</div>` : ''}
+        ${e ? `<div style="font-size:12px;color:var(--text-muted);margin-top:4px">${e.state === 'hot' ? '🔥 Hot' : '❄️ Cold'}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    const logged = new Date().toLocaleString('en-US', {
+      month: 'long', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    });
+
+    document.getElementById('summary-content').innerHTML = `
+      <div class="card" style="margin-bottom:16px">
+        <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px">${esc(session.event || session.track || 'Session')}</div>
+        <div style="font-size:13px;color:var(--text-muted)">${esc(session.track)} · ${session.type} #${session.num}</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px">${logged}</div>
+        ${session.notes ? `<div style="font-size:13px;color:var(--text-muted);margin-top:8px;font-style:italic">${esc(session.notes)}</div>` : ''}
+      </div>
+      <div class="card-title">Latest Readings</div>
+      <div class="summary-grid">${summaryGrid}</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">${entries.length} total reading${entries.length !== 1 ? 's' : ''} in this session</div>
+      <button class="btn btn-secondary" onclick="App.exportCSV()">📤 Export Session CSV</button>
+    `;
+
+    this.showView('view-summary');
+  },
+
+  // ----- EXPORT CSV -----
+  exportCSV() {
+    const sessions = DB.getSessions();
+    const entries = DB.getEntries();
+
+    if (!entries.length) {
+      alert('No data to export yet.');
+      return;
+    }
+
+    const headers = ['Session ID','Event','Track','Type','Session #','Car Notes','Timestamp','Wheel','PSI','Target PSI','Delta','State','Ambient Temp (F)','Notes'];
+    const rows = [headers.join(',')];
+
+    entries.forEach(e => {
+      const s = sessions.find(s => s.id === e.sessionId) || {};
+      const delta = e.target ? parseFloat((e.psi - e.target).toFixed(1)) : '';
+      const time = new Date(e.timestamp).toLocaleString('en-US');
+      rows.push([
+        e.sessionId,
+        csvCell(s.event),
+        csvCell(s.track),
+        csvCell(s.type),
+        s.num || '',
+        csvCell(s.notes),
+        `"${time}"`,
+        e.wheel,
+        e.psi,
+        e.target || '',
+        delta,
+        e.state,
+        e.ambientTemp || '',
+        csvCell(e.note)
+      ].join(','));
+    });
+
+    const csv = rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `HPDE-Tire-Log-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.toast('📤 CSV exported!');
+  },
+
+  // ----- TOAST -----
+  toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+  }
+};
+
+// =====================================================
+// HELPERS
+// =====================================================
+function esc(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function csvCell(val) {
+  if (!val) return '';
+  return '"' + String(val).replace(/"/g, '""') + '"';
+}
+
+// =====================================================
+// SERVICE WORKER REGISTRATION
+// =====================================================
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW reg failed:', e));
+}
+
+// =====================================================
+// INIT
+// =====================================================
+App.renderHome();
+</script>
+</body>
+</html>
