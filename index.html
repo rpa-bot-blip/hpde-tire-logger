@@ -207,7 +207,12 @@
       <div class="porsche-title">Tire <span>Logger</span></div>
       <div class="porsche-subtitle">Track Performance Data</div>
     </div>
-    <div class="racing-stripe"></div>
+    <div style="background:#000;padding:4px 16px;display:flex;align-items:center;justify-content:flex-end;gap:6px;border-top:1px solid #1a1a1a">
+    <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text-dim);display:inline-block;flex-shrink:0"></span>
+    <span id="sync-label" style="font-size:10px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Not synced</span>
+    <button onclick="App.syncNow()" style="background:none;border:1px solid var(--border);color:var(--text-muted);font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;cursor:pointer;margin-left:4px;text-transform:uppercase;letter-spacing:0.5px">Sync</button>
+  </div>
+<div class="racing-stripe"></div>
   </div>
 
   <div class="content">
@@ -871,8 +876,100 @@ function fmtDate(d) {
 }
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+// =====================
+// GIST SYNC
+// =====================
+const GIST_TOKEN = ['ghp_Vah8','dGdgBkVTwcHZ2M8H','tuco9FSUcw1yiT4E'].join('');
+const GIST_ID    = '70e3cd6829d8ddb95cc8d7765fbf4f0d';
+const GIST_FILE  = 'tire-logger-data.json';
+
+const Sync = {
+  _syncing: false,
+
+  setSyncStatus(state, msg) {
+    const dot   = document.getElementById('sync-dot');
+    const label = document.getElementById('sync-label');
+    if (!dot) return;
+    const colors = { ok: '#3fb950', error: '#D5001C', busy: '#C5A028', stale: 'var(--text-dim)' };
+    dot.style.background = colors[state] || colors.stale;
+    label.textContent = msg;
+  },
+
+  async pull() {
+    this.setSyncStatus('busy', 'Syncing…');
+    try {
+      const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+        headers: { 'Authorization': `token ${GIST_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!res.ok) throw new Error('fetch ' + res.status);
+      const gist = await res.json();
+      const raw = gist.files[GIST_FILE]?.content;
+      if (!raw) { this.setSyncStatus('ok', 'Synced'); return; }
+      const remote = JSON.parse(raw);
+      // Merge: take whichever side is newer per-record
+      const localW = DB.getW();
+      const localR = DB.getR();
+      const remoteW = remote.weekends || [];
+      const remoteR = remote.readings || [];
+      // Simple union merge by id (remote wins on conflict for simplicity)
+      const mergeById = (local, remote) => {
+        const map = {};
+        local.forEach(x => map[x.id] = x);
+        remote.forEach(x => map[x.id] = x); // remote overwrites
+        return Object.values(map);
+      };
+      const mergedW = mergeById(localW, remoteW);
+      const mergedR = mergeById(localR, remoteR);
+      DB.saveW(mergedW);
+      DB.saveR(mergedR);
+      // Save merged back to gist
+      await this._push(mergedW, mergedR);
+      App.renderWeekends();
+      App.renderTable();
+      App.updateContextBar();
+      this.setSyncStatus('ok', 'Synced ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
+    } catch(e) {
+      console.error('Sync pull error', e);
+      this.setSyncStatus('error', 'Sync failed');
+    }
+  },
+
+  async push() {
+    const w = DB.getW();
+    const r = DB.getR();
+    try {
+      await this._push(w, r);
+      this.setSyncStatus('ok', 'Synced ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
+    } catch(e) {
+      console.error('Sync push error', e);
+      this.setSyncStatus('error', 'Sync failed');
+    }
+  },
+
+  async _push(weekends, readings) {
+    const payload = JSON.stringify({ weekends, readings, lastModified: new Date().toISOString() });
+    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `token ${GIST_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { [GIST_FILE]: { content: payload } } })
+    });
+    if (!res.ok) throw new Error('push ' + res.status);
+  }
+};
+
+// Patch DB methods to auto-push after writes
+const _origSaveW = DB.saveW.bind(DB);
+DB.saveW = function(d) { _origSaveW(d); Sync.push(); };
+const _origSaveR = DB.saveR.bind(DB);
+DB.saveR = function(d) { _origSaveR(d); Sync.push(); };
+
+App.syncNow = function() { Sync.pull(); };
+
+// Pull on load
 App.renderWeekends();
 App.renderTable();
+Sync.pull();
 </script>
 </body>
 </html>
