@@ -36,51 +36,47 @@
 
     /* HEADER */
     .header {
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 14px 16px; display: flex; align-items: center; gap: 10px;
+      position: sticky; top: 0; z-index: 10;
     }
     .header h1 { font-size: 17px; font-weight: 600; color: var(--text); flex: 1; }
     .header .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
     .back-btn {
       background: none; border: none; color: var(--blue);
-      font-size: 16px; font-weight: 500; cursor: pointer;
-      padding: 4px 0; display: flex; align-items: center; gap: 4px;
+      font-size: 16px; font-weight: 500; cursor: pointer; padding: 4px 0;
     }
 
     /* CONTENT */
-    .content {
-      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px;
-    }
+    .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
 
     /* BUTTONS */
     .btn {
       display: flex; align-items: center; justify-content: center;
       gap: 8px; padding: 13px 20px; border-radius: 10px; border: none;
       font-size: 16px; font-weight: 600; cursor: pointer; min-height: 48px;
-      transition: opacity 0.15s;
+      transition: opacity 0.15s; width: 100%;
     }
     .btn:active { opacity: 0.7; }
-    .btn-primary { background: var(--blue); color: #0d1117; width: 100%; }
-    .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); width: 100%; }
+    .btn-primary { background: var(--blue); color: #0d1117; }
+    .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
     .btn-sm { font-size: 13px; padding: 7px 12px; min-height: 34px; border-radius: 8px; width: auto; }
 
     /* FORM */
     .form-group { margin-bottom: 14px; }
-    label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px; }
+    label {
+      display: block; font-size: 12px; font-weight: 600; color: var(--text-muted);
+      margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px;
+    }
     input[type="text"], input[type="number"], textarea, select {
       width: 100%; background: var(--bg); border: 1px solid var(--border);
       border-radius: 8px; padding: 11px 13px; font-size: 16px; color: var(--text);
       appearance: none; -webkit-appearance: none; outline: none; min-height: 46px;
     }
     input:focus, textarea:focus, select:focus { border-color: var(--blue); }
-    textarea { resize: none; min-height: 70px; font-family: inherit; font-size: 15px; }
+    textarea { resize: none; min-height: 68px; font-family: inherit; font-size: 15px; }
+    .row { display: flex; gap: 10px; }
+    .row .form-group { flex: 1; }
 
     /* HOME */
     .hero { text-align: center; padding: 24px 0 20px; }
@@ -91,7 +87,7 @@
     .session-item {
       background: var(--card); border: 1px solid var(--border); border-radius: 12px;
       padding: 13px 14px; margin-bottom: 8px; cursor: pointer;
-      display: flex; align-items: center; gap: 10px; transition: border-color 0.15s;
+      display: flex; align-items: center; gap: 10px;
     }
     .session-item:active { border-color: var(--blue); }
     .session-item .si-main { flex: 1; min-width: 0; }
@@ -102,118 +98,78 @@
     .empty-state { text-align: center; padding: 28px 20px; color: var(--text-dim); font-size: 14px; }
     .empty-state .es-icon { font-size: 32px; margin-bottom: 8px; }
 
-    /* ===== READINGS TABLE ===== */
+    /* SESSION INFO BAR */
+    .session-info-bar {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .sib-item { font-size: 12px; }
+    .sib-item .sib-label { color: var(--text-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .sib-item .sib-val { color: var(--text-muted); font-weight: 500; margin-top: 1px; }
+
+    /* READINGS TABLE */
     .table-wrap {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 16px;
-      max-height: 340px;
-      overflow-y: auto;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border); border-radius: 10px;
+      margin-bottom: 16px; max-height: 320px; overflow-y: auto;
     }
-    table {
-      border-collapse: collapse;
-      min-width: 100%;
-      font-size: 12px;
-    }
+    table { border-collapse: collapse; min-width: 100%; font-size: 13px; }
     thead th {
-      background: var(--card);
-      color: var(--text-muted);
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-    thead tr:first-child th {
-      border-bottom: none;
-      padding-bottom: 3px;
-    }
-    thead tr:last-child th {
-      border-top: none;
-      padding-top: 3px;
+      background: var(--card); color: var(--text-muted); font-size: 10px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+      padding: 8px 10px; border-bottom: 1px solid var(--border);
+      white-space: nowrap; position: sticky; top: 0; z-index: 2;
     }
     tbody tr { border-bottom: 1px solid var(--border); }
     tbody tr:last-child { border-bottom: none; }
-    tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
-    tbody td {
-      padding: 9px 10px;
-      white-space: nowrap;
-      color: var(--text);
-      vertical-align: middle;
-    }
-    td.td-time { color: var(--text-muted); font-size: 11px; min-width: 90px; }
-    td.td-session { color: var(--text-muted); font-size: 11px; min-width: 80px; }
-    td.td-psi { text-align: center; font-weight: 600; font-size: 13px; min-width: 48px; }
+    tbody tr.row-cold { background: rgba(88,166,255,0.04); }
+    tbody tr.row-hot  { background: rgba(227,179,65,0.04); }
+    tbody td { padding: 9px 10px; white-space: nowrap; vertical-align: middle; }
+    td.td-time { color: var(--text-muted); font-size: 11px; min-width: 85px; }
+    td.td-state { font-size: 13px; text-align: center; min-width: 36px; }
+    td.td-psi { text-align: center; font-weight: 600; min-width: 44px; }
     td.td-psi.cold { color: var(--blue); }
     td.td-psi.hot  { color: var(--orange); }
-    td.td-psi.empty { color: var(--text-dim); font-weight: 400; }
-    td.td-notes { color: var(--text-muted); font-size: 11px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+    td.td-psi.empty { color: var(--text-dim); font-weight: 400; font-size: 11px; }
+    td.td-notes { color: var(--text-muted); font-size: 11px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
     td.td-del { padding: 4px 8px; }
-    .del-btn { background: none; border: none; color: var(--red); font-size: 16px; cursor: pointer; padding: 4px; }
-    .th-wheel { background: rgba(88,166,255,0.08) !important; }
+    .del-btn { background: none; border: none; color: var(--red); font-size: 17px; cursor: pointer; padding: 4px; }
 
-    /* ===== LOG INPUT FORM ===== */
+    /* LOG FORM */
     .log-form-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 14px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px; margin-bottom: 14px;
     }
-    .log-form-title {
-      font-size: 13px; font-weight: 700; color: var(--text);
-      margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
-    }
+    .log-form-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
 
-    /* 2x2 Tire Grid Inputs */
-    .input-tire-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
+    /* Big Hot/Cold Toggle */
+    .hc-record-toggle {
+      display: flex; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden; margin-bottom: 14px;
     }
-    .input-tire-cell {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-    }
-    .input-tire-cell .itc-label {
-      font-size: 10px; font-weight: 700; color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px;
-    }
-    .input-tire-cell input[type="number"] {
-      padding: 8px 10px; font-size: 18px; font-weight: 600;
-      min-height: 42px; margin-bottom: 6px;
-    }
-    .input-tire-cell .tgt-row {
-      display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
-    }
-    .input-tire-cell .tgt-row label { margin: 0; font-size: 10px; white-space: nowrap; }
-    .input-tire-cell .tgt-row input { font-size: 13px; min-height: 34px; padding: 6px 8px; }
-
-    /* Hot/Cold toggle — compact */
-    .hc-toggle {
-      display: flex; background: var(--border); border-radius: 6px; overflow: hidden;
-    }
-    .hc-btn {
-      flex: 1; padding: 6px 4px; border: none; background: transparent;
-      font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    .hc-record-btn {
+      flex: 1; padding: 12px; border: none; background: transparent;
+      font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.15s;
       color: var(--text-muted);
     }
-    .hc-btn.cold.active { background: var(--blue); color: #0d1117; }
-    .hc-btn.hot.active  { background: var(--orange); color: #0d1117; }
+    .hc-record-btn.cold.active { background: var(--blue); color: #0d1117; }
+    .hc-record-btn.hot.active  { background: var(--orange); color: #0d1117; }
 
-    /* Shared row */
-    .row { display: flex; gap: 10px; }
-    .row .form-group { flex: 1; }
+    /* 2x2 Tire Inputs */
+    .input-tire-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+    }
+    .input-tire-cell {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px;
+    }
+    .itc-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+    .input-tire-cell input[type="number"] {
+      padding: 8px 10px; font-size: 22px; font-weight: 700; min-height: 48px;
+      text-align: center; letter-spacing: -0.5px;
+    }
+    .psi-label { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 3px; }
 
     /* TOAST */
     .toast {
@@ -224,7 +180,6 @@
       opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 100; white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
     .divider { height: 1px; background: var(--border); margin: 14px 0; }
     .bottom-pad { height: env(safe-area-inset-bottom, 20px); }
     .flex-between { display: flex; align-items: center; justify-content: space-between; }
@@ -233,12 +188,10 @@
 </head>
 <body>
 
-<!-- ==================== HOME VIEW ==================== -->
+<!-- ==================== HOME ==================== -->
 <div id="view-home" class="view active">
   <div class="header">
-    <div style="flex:1">
-      <h1>🏁 HPDE Tire Logger</h1>
-    </div>
+    <h1>🏁 HPDE Tire Logger</h1>
     <button class="btn btn-secondary btn-sm" onclick="App.exportCSV()">Export CSV</button>
   </div>
   <div class="content">
@@ -256,7 +209,7 @@
   </div>
 </div>
 
-<!-- ==================== NEW SESSION VIEW ==================== -->
+<!-- ==================== NEW SESSION ==================== -->
 <div id="view-new-session" class="view">
   <div class="header">
     <button class="back-btn" onclick="App.goHome()">‹ Back</button>
@@ -287,16 +240,32 @@
         <input type="number" id="ns-num" value="1" min="1">
       </div>
     </div>
+    <div class="row">
+      <div class="form-group">
+        <label>Ambient Temp (°F)</label>
+        <input type="number" id="ns-temp" placeholder="72">
+      </div>
+      <div class="form-group">
+        <label>Track Conditions</label>
+        <select id="ns-conditions">
+          <option>Dry</option>
+          <option>Damp</option>
+          <option>Wet</option>
+          <option>Mixed</option>
+          <option>Unknown</option>
+        </select>
+      </div>
+    </div>
     <div class="form-group">
       <label>Car / Setup Notes (optional)</label>
-      <textarea id="ns-notes" placeholder="e.g. Stock setup, 72°F ambient"></textarea>
+      <textarea id="ns-notes" placeholder="e.g. stock suspension, cold start"></textarea>
     </div>
     <button class="btn btn-primary" onclick="App.createSession()">Start Session →</button>
     <div class="bottom-pad"></div>
   </div>
 </div>
 
-<!-- ==================== SESSION VIEW ==================== -->
+<!-- ==================== SESSION ==================== -->
 <div id="view-session" class="view">
   <div class="header">
     <button class="back-btn" onclick="App.goHome()">‹ Back</button>
@@ -307,180 +276,146 @@
   </div>
   <div class="content">
 
-    <!-- READINGS TABLE -->
+    <!-- Session info bar -->
+    <div class="session-info-bar" id="sess-info-bar"></div>
+
+    <!-- Readings Table -->
     <div class="flex-between" style="margin-bottom:8px">
-      <div class="section-label">Recent Readings</div>
+      <div class="section-label">Readings</div>
       <span id="sess-entry-count" style="font-size:11px;color:var(--text-muted)"></span>
     </div>
-
-    <div class="table-wrap" id="readings-table-wrap">
-      <table id="readings-table">
+    <div class="table-wrap">
+      <table>
         <thead>
           <tr>
-            <th rowspan="2">Time</th>
-            <th rowspan="2">Session</th>
-            <th colspan="2" class="th-wheel">FL</th>
-            <th colspan="2" class="th-wheel">FR</th>
-            <th colspan="2" class="th-wheel">RL</th>
-            <th colspan="2" class="th-wheel">RR</th>
-            <th rowspan="2">Notes</th>
-            <th rowspan="2"></th>
-          </tr>
-          <tr>
-            <th class="th-wheel">❄️</th><th class="th-wheel">🔥</th>
-            <th class="th-wheel">❄️</th><th class="th-wheel">🔥</th>
-            <th class="th-wheel">❄️</th><th class="th-wheel">🔥</th>
-            <th class="th-wheel">❄️</th><th class="th-wheel">🔥</th>
+            <th>Time</th>
+            <th></th><!-- state icon -->
+            <th>FL</th>
+            <th>FR</th>
+            <th>RL</th>
+            <th>RR</th>
+            <th>Notes</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="readings-tbody">
-          <tr><td colspan="12" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet</td></tr>
+          <tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- LOG FORM -->
+    <!-- Log Form -->
     <div class="log-form-card">
       <div class="log-form-title">📝 Log Reading</div>
 
-      <!-- 2x2 Tire Inputs -->
+      <!-- Hot / Cold record-level toggle -->
+      <div class="hc-record-toggle">
+        <button class="hc-record-btn cold active" id="hc-cold" onclick="App.setHC('cold')">❄️ Cold — Before Session</button>
+        <button class="hc-record-btn hot" id="hc-hot" onclick="App.setHC('hot')">🔥 Hot — After Session</button>
+      </div>
+
+      <!-- 2x2 PSI inputs -->
       <div class="input-tire-grid">
-        <!-- FL -->
         <div class="input-tire-cell">
           <div class="itc-label">⬅ Front Left</div>
-          <input type="number" id="psi-FL" step="0.5" min="0" max="60" placeholder="PSI">
-          <div class="tgt-row">
-            <label>Target:</label>
-            <input type="number" id="tgt-FL" step="0.5" min="0" max="60" placeholder="—">
-          </div>
-          <div class="hc-toggle">
-            <button class="hc-btn cold active" id="hc-FL-cold" onclick="App.setHC('FL','cold')">❄️ Cold</button>
-            <button class="hc-btn hot" id="hc-FL-hot" onclick="App.setHC('FL','hot')">🔥 Hot</button>
-          </div>
+          <input type="number" id="psi-FL" step="0.5" min="0" max="60" placeholder="0.0">
+          <div class="psi-label">PSI</div>
         </div>
-        <!-- FR -->
         <div class="input-tire-cell">
           <div class="itc-label">Front Right ➡</div>
-          <input type="number" id="psi-FR" step="0.5" min="0" max="60" placeholder="PSI">
-          <div class="tgt-row">
-            <label>Target:</label>
-            <input type="number" id="tgt-FR" step="0.5" min="0" max="60" placeholder="—">
-          </div>
-          <div class="hc-toggle">
-            <button class="hc-btn cold active" id="hc-FR-cold" onclick="App.setHC('FR','cold')">❄️ Cold</button>
-            <button class="hc-btn hot" id="hc-FR-hot" onclick="App.setHC('FR','hot')">🔥 Hot</button>
-          </div>
+          <input type="number" id="psi-FR" step="0.5" min="0" max="60" placeholder="0.0">
+          <div class="psi-label">PSI</div>
         </div>
-        <!-- RL -->
         <div class="input-tire-cell">
           <div class="itc-label">⬅ Rear Left</div>
-          <input type="number" id="psi-RL" step="0.5" min="0" max="60" placeholder="PSI">
-          <div class="tgt-row">
-            <label>Target:</label>
-            <input type="number" id="tgt-RL" step="0.5" min="0" max="60" placeholder="—">
-          </div>
-          <div class="hc-toggle">
-            <button class="hc-btn cold active" id="hc-RL-cold" onclick="App.setHC('RL','cold')">❄️ Cold</button>
-            <button class="hc-btn hot" id="hc-RL-hot" onclick="App.setHC('RL','hot')">🔥 Hot</button>
-          </div>
+          <input type="number" id="psi-RL" step="0.5" min="0" max="60" placeholder="0.0">
+          <div class="psi-label">PSI</div>
         </div>
-        <!-- RR -->
         <div class="input-tire-cell">
           <div class="itc-label">Rear Right ➡</div>
-          <input type="number" id="psi-RR" step="0.5" min="0" max="60" placeholder="PSI">
-          <div class="tgt-row">
-            <label>Target:</label>
-            <input type="number" id="tgt-RR" step="0.5" min="0" max="60" placeholder="—">
-          </div>
-          <div class="hc-toggle">
-            <button class="hc-btn cold active" id="hc-RR-cold" onclick="App.setHC('RR','cold')">❄️ Cold</button>
-            <button class="hc-btn hot" id="hc-RR-hot" onclick="App.setHC('RR','hot')">🔥 Hot</button>
-          </div>
+          <input type="number" id="psi-RR" step="0.5" min="0" max="60" placeholder="0.0">
+          <div class="psi-label">PSI</div>
         </div>
       </div>
 
-      <!-- Shared fields -->
-      <div class="row">
-        <div class="form-group" style="flex:2">
-          <label>Notes</label>
-          <input type="text" id="reading-notes" placeholder="e.g. after session 2, slight push">
-        </div>
-        <div class="form-group" style="flex:1">
-          <label>Temp °F</label>
-          <input type="number" id="ambient-temp" placeholder="72">
-        </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Notes</label>
+        <input type="text" id="reading-notes" placeholder="e.g. slight push after session 2">
       </div>
 
       <button class="btn btn-primary" onclick="App.logReading()">💾 Log Reading</button>
     </div>
 
     <div class="divider"></div>
-    <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red)" onclick="App.deleteSession()">
+    <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red);margin-bottom:8px" onclick="App.deleteSession()">
       🗑️ Delete Session
     </button>
     <div class="bottom-pad"></div>
   </div>
 </div>
 
-<!-- ==================== TOAST ==================== -->
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// =====================================================
+// =====================
 // DATA MODEL
-// Storage keys: hpde_sessions, hpde_batches
-// Session: { id, event, track, type, num, notes, createdAt }
-// Batch: { id, sessionId, timestamp, ambientTemp, note,
-//           FL:{psi,target,state}, FR:{...}, RL:{...}, RR:{...} }
-// =====================================================
+// Session: { id, event, track, type, num, notes, ambientTemp, conditions, createdAt }
+// Batch:   { id, sessionId, timestamp, state:'cold'|'hot', note, FL, FR, RL, RR }
+//           FL/FR/RL/RR: number (PSI) or null
+// =====================
+
 const DB = {
-  getSessions() { return JSON.parse(localStorage.getItem('hpde_sessions') || '[]'); },
-  saveSessions(d) { localStorage.setItem('hpde_sessions', JSON.stringify(d)); },
-  getBatches() { return JSON.parse(localStorage.getItem('hpde_batches') || '[]'); },
-  saveBatches(d) { localStorage.setItem('hpde_batches', JSON.stringify(d)); },
-  addSession(s) { const d = this.getSessions(); d.unshift(s); this.saveSessions(d); },
-  addBatch(b) { const d = this.getBatches(); d.push(b); this.saveBatches(d); },
-  deleteBatch(id) { this.saveBatches(this.getBatches().filter(b => b.id !== id)); },
-  deleteSession(id) {
-    this.saveSessions(this.getSessions().filter(s => s.id !== id));
-    this.saveBatches(this.getBatches().filter(b => b.sessionId !== id));
-  },
-  getSessionBatches(sessionId) {
-    return this.getBatches().filter(b => b.sessionId === sessionId);
-  },
-  // Migrate old entry-based data
+  getSessions()    { return JSON.parse(localStorage.getItem('hpde_sessions') || '[]'); },
+  saveSessions(d)  { localStorage.setItem('hpde_sessions', JSON.stringify(d)); },
+  getBatches()     { return JSON.parse(localStorage.getItem('hpde_batches') || '[]'); },
+  saveBatches(d)   { localStorage.setItem('hpde_batches', JSON.stringify(d)); },
+  addSession(s)    { const d = this.getSessions(); d.unshift(s); this.saveSessions(d); },
+  addBatch(b)      { const d = this.getBatches(); d.push(b); this.saveBatches(d); },
+  deleteBatch(id)  { this.saveBatches(this.getBatches().filter(b => b.id !== id)); },
+  deleteSession(id){ this.saveSessions(this.getSessions().filter(s => s.id !== id)); this.saveBatches(this.getBatches().filter(b => b.sessionId !== id)); },
+  getSessionBatches(sid) { return this.getBatches().filter(b => b.sessionId === sid); },
+
   migrate() {
+    // Migrate old per-wheel entry format
     const old = localStorage.getItem('hpde_entries');
     if (!old) return;
-    const entries = JSON.parse(old);
-    // Group by timestamp (within 5s = same batch)
-    const groups = {};
-    entries.forEach(e => {
-      const key = e.sessionId + '_' + Math.floor(new Date(e.timestamp).getTime() / 5000);
-      if (!groups[key]) groups[key] = { sessionId: e.sessionId, timestamp: e.timestamp, entries: [] };
-      groups[key].entries.push(e);
-    });
-    const batches = this.getBatches();
-    Object.values(groups).forEach(g => {
-      const b = { id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2), sessionId: g.sessionId, timestamp: g.timestamp, note: '', ambientTemp: null };
-      ['FL','FR','RL','RR'].forEach(w => {
-        const e = g.entries.find(x => x.wheel === w);
-        b[w] = e ? { psi: e.psi, target: e.target, state: e.state } : null;
+    try {
+      const entries = JSON.parse(old);
+      const groups = {};
+      entries.forEach(e => {
+        const key = e.sessionId + '_' + Math.floor(new Date(e.timestamp).getTime() / 5000);
+        if (!groups[key]) groups[key] = { sessionId: e.sessionId, timestamp: e.timestamp, state: e.state || 'cold', note: '', FL:null, FR:null, RL:null, RR:null };
+        groups[key][e.wheel] = e.psi;
       });
-      batches.push(b);
+      const batches = this.getBatches();
+      Object.values(groups).forEach(g => {
+        batches.push({ id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2), ...g });
+      });
+      this.saveBatches(batches);
+      localStorage.removeItem('hpde_entries');
+    } catch(e) {}
+
+    // Migrate old batch format (per-wheel object)
+    const batches = this.getBatches().map(b => {
+      ['FL','FR','RL','RR'].forEach(w => {
+        if (b[w] && typeof b[w] === 'object') {
+          b[w] = b[w].psi || null;
+          if (!b.state && b[w] && b[w].state) b.state = b[w].state;
+        }
+      });
+      if (!b.state) b.state = 'cold';
+      return b;
     });
     this.saveBatches(batches);
-    localStorage.removeItem('hpde_entries');
   }
 };
 
-// Run migration on load
 DB.migrate();
 
-// =====================================================
 const App = {
   currentSessionId: null,
-  hcState: { FL:'cold', FR:'cold', RL:'cold', RR:'cold' },
+  hcState: 'cold',
 
   showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -504,13 +439,15 @@ const App = {
     const batches = DB.getBatches();
     el.innerHTML = sessions.map(s => {
       const count = batches.filter(b => b.sessionId === s.id).length;
-      const date = new Date(s.createdAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+      const date = new Date(s.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+      const cond = s.conditions ? ' · ' + s.conditions : '';
+      const temp = s.ambientTemp ? ' · ' + s.ambientTemp + '°F' : '';
       return `<div class="session-item" onclick="App.openSession('${s.id}')">
         <div class="si-main">
           <div class="si-title">${esc(s.event || s.track || 'Session')}</div>
-          <div class="si-sub">${esc(s.track)} · ${esc(s.type)} #${s.num} · ${date}</div>
+          <div class="si-sub">${esc(s.track)} · ${s.type} #${s.num} · ${date}${temp}${cond}</div>
         </div>
-        <span class="si-badge">${count} reading${count !== 1 ? 's' : ''}</span>
+        <span class="si-badge">${count} reading${count!==1?'s':''}</span>
         <span class="chevron">›</span>
       </div>`;
     }).join('');
@@ -520,6 +457,8 @@ const App = {
     ['ns-event','ns-track','ns-notes'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('ns-type').value = 'Practice';
     document.getElementById('ns-num').value = '1';
+    document.getElementById('ns-temp').value = '';
+    document.getElementById('ns-conditions').value = 'Dry';
     this.showView('view-new-session');
   },
 
@@ -532,6 +471,8 @@ const App = {
       event, track,
       type: document.getElementById('ns-type').value,
       num: parseInt(document.getElementById('ns-num').value) || 1,
+      ambientTemp: parseFloat(document.getElementById('ns-temp').value) || null,
+      conditions: document.getElementById('ns-conditions').value,
       notes: document.getElementById('ns-notes').value.trim(),
       createdAt: new Date().toISOString()
     };
@@ -543,27 +484,35 @@ const App = {
     this.currentSessionId = id;
     const s = DB.getSessions().find(s => s.id === id);
     if (!s) { this.goHome(); return; }
+
     document.getElementById('sess-title').textContent = s.event || s.track || 'Session';
     document.getElementById('sess-subtitle').textContent = (s.track ? s.track + ' · ' : '') + s.type + ' #' + s.num;
+
+    // Info bar
+    const bar = document.getElementById('sess-info-bar');
+    const items = [];
+    if (s.ambientTemp) items.push({ label: 'Ambient', val: s.ambientTemp + '°F' });
+    if (s.conditions)  items.push({ label: 'Track', val: s.conditions });
+    if (s.notes)       items.push({ label: 'Notes', val: s.notes });
+    bar.innerHTML = items.length
+      ? items.map(i => `<div class="sib-item"><div class="sib-label">${i.label}</div><div class="sib-val">${esc(i.val)}</div></div>`).join('')
+      : '<div style="font-size:12px;color:var(--text-dim)">No session details</div>';
+
     this.resetForm();
     this.renderTable();
     this.showView('view-session');
   },
 
   resetForm() {
-    ['FL','FR','RL','RR'].forEach(w => {
-      document.getElementById('psi-'+w).value = '';
-      document.getElementById('tgt-'+w).value = '';
-      this.setHC(w, 'cold');
-    });
+    ['FL','FR','RL','RR'].forEach(w => document.getElementById('psi-'+w).value = '');
     document.getElementById('reading-notes').value = '';
-    document.getElementById('ambient-temp').value = '';
+    this.setHC('cold');
   },
 
-  setHC(wheel, state) {
-    this.hcState[wheel] = state;
-    document.getElementById('hc-'+wheel+'-cold').classList.toggle('active', state === 'cold');
-    document.getElementById('hc-'+wheel+'-hot').classList.toggle('active', state === 'hot');
+  setHC(state) {
+    this.hcState = state;
+    document.getElementById('hc-cold').classList.toggle('active', state === 'cold');
+    document.getElementById('hc-hot').classList.toggle('active', state === 'hot');
   },
 
   logReading() {
@@ -572,64 +521,56 @@ const App = {
       id: 'b_' + Date.now(),
       sessionId: this.currentSessionId,
       timestamp: new Date().toISOString(),
-      note: document.getElementById('reading-notes').value.trim(),
-      ambientTemp: parseFloat(document.getElementById('ambient-temp').value) || null
+      state: this.hcState,
+      note: document.getElementById('reading-notes').value.trim()
     };
     let hasAny = false;
     wheels.forEach(w => {
       const v = document.getElementById('psi-'+w).value;
       const psi = parseFloat(v);
-      if (!isNaN(psi) && v !== '') {
-        batch[w] = {
-          psi,
-          target: parseFloat(document.getElementById('tgt-'+w).value) || null,
-          state: this.hcState[w]
-        };
-        hasAny = true;
-      } else {
-        batch[w] = null;
-      }
+      batch[w] = (!isNaN(psi) && v !== '') ? psi : null;
+      if (batch[w] !== null) hasAny = true;
     });
     if (!hasAny) { alert('Enter at least one tire pressure.'); return; }
     DB.addBatch(batch);
     this.resetForm();
     this.renderTable();
-    this.toast('✅ Reading logged — ' + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}));
+    const stateLabel = this.hcState === 'cold' ? '❄️ Cold' : '🔥 Hot';
+    this.toast('✅ ' + stateLabel + ' reading logged — ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
   },
 
   renderTable() {
-    const batches = DB.getSessionBatches(this.currentSessionId)
-      .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))
-      .slice(0, 10);
-    const session = DB.getSessions().find(s => s.id === this.currentSessionId);
-    const sessLabel = session ? session.type + ' #' + session.num : '';
-    const countEl = document.getElementById('sess-entry-count');
-    const total = DB.getSessionBatches(this.currentSessionId).length;
-    countEl.textContent = total + ' reading' + (total !== 1 ? 's' : '') + (total > 10 ? ' (showing 10)' : '');
+    const all = DB.getSessionBatches(this.currentSessionId);
+    const batches = [...all].sort((a,b) => new Date(b.timestamp)-new Date(a.timestamp)).slice(0,10);
+
+    const total = all.length;
+    document.getElementById('sess-entry-count').textContent =
+      total + ' reading' + (total!==1?'s':'') + (total>10?' (showing 10)':'');
 
     const tbody = document.getElementById('readings-tbody');
     if (!batches.length) {
-      tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet — log one below</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet — log one below</td></tr>';
       return;
     }
 
     tbody.innerHTML = batches.map(b => {
-      const time = new Date(b.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+      const time = new Date(b.timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+      const isCold = b.state === 'cold';
+      const stateIcon = isCold ? '❄️' : '🔥';
+      const cls = isCold ? 'cold' : 'hot';
 
-      const cell = (w, state) => {
-        const t = b[w];
-        if (!t || t.state !== state) return `<td class="td-psi empty">—</td>`;
-        return `<td class="td-psi ${state}">${t.psi}</td>`;
+      const cell = w => {
+        const v = b[w];
+        return v !== null && v !== undefined
+          ? `<td class="td-psi ${cls}">${v}</td>`
+          : `<td class="td-psi empty">—</td>`;
       };
 
-      return `<tr>
+      return `<tr class="row-${cls}">
         <td class="td-time">${time}</td>
-        <td class="td-session">${esc(sessLabel)}</td>
-        ${cell('FL','cold')}${cell('FL','hot')}
-        ${cell('FR','cold')}${cell('FR','hot')}
-        ${cell('RL','cold')}${cell('RL','hot')}
-        ${cell('RR','cold')}${cell('RR','hot')}
-        <td class="td-notes">${esc(b.note || (b.ambientTemp ? b.ambientTemp + '°F' : ''))}</td>
+        <td class="td-state">${stateIcon}</td>
+        ${cell('FL')}${cell('FR')}${cell('RL')}${cell('RR')}
+        <td class="td-notes">${esc(b.note||'')}</td>
         <td class="td-del"><button class="del-btn" onclick="App.deleteBatch('${b.id}')">×</button></td>
       </tr>`;
     }).join('');
@@ -654,33 +595,24 @@ const App = {
     const batches = DB.getBatches();
     if (!batches.length) { alert('No data to export yet.'); return; }
 
-    const wheels = ['FL','FR','RL','RR'];
-    const headers = ['Timestamp','Event','Track','Session Type','Session #',
-      'FL PSI','FL Target','FL State',
-      'FR PSI','FR Target','FR State',
-      'RL PSI','RL Target','RL State',
-      'RR PSI','RR Target','RR State',
-      'Ambient Temp (F)','Notes'];
-    const rows = [headers.join(',')];
-    batches.forEach(b => {
+    const hdrs = ['Timestamp','Event','Track','Session Type','Session #','Ambient Temp (F)','Track Conditions','State','FL PSI','FR PSI','RL PSI','RR PSI','Notes'];
+    const rows = [hdrs.join(',')];
+    [...batches].sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp)).forEach(b => {
       const s = sessions.find(x => x.id === b.sessionId) || {};
-      const time = new Date(b.timestamp).toLocaleString('en-US');
-      const cols = [
-        `"${time}"`, csvCell(s.event), csvCell(s.track), csvCell(s.type), s.num||''
-      ];
-      wheels.forEach(w => {
-        const t = b[w];
-        cols.push(t ? t.psi : '', t && t.target ? t.target : '', t ? t.state : '');
-      });
-      cols.push(b.ambientTemp || '', csvCell(b.note));
-      rows.push(cols.join(','));
+      rows.push([
+        '"' + new Date(b.timestamp).toLocaleString('en-US') + '"',
+        csvCell(s.event), csvCell(s.track), csvCell(s.type), s.num||'',
+        s.ambientTemp||'', csvCell(s.conditions), b.state,
+        b.FL??'', b.FR??'', b.RL??'', b.RR??'',
+        csvCell(b.note)
+      ].join(','));
     });
 
-    const blob = new Blob([rows.join('\n')], { type:'text/csv' });
+    const blob = new Blob([rows.join('\n')], {type:'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `HPDE-Tire-Log-${new Date().toISOString().slice(0,10)}.csv`;
+    a.download = 'HPDE-Tire-Log-' + new Date().toISOString().slice(0,10) + '.csv';
     a.click();
     URL.revokeObjectURL(url);
     this.toast('📤 CSV exported!');
@@ -697,10 +629,7 @@ const App = {
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function csvCell(v) { if (!v) return ''; return '"' + String(v).replace(/"/g,'""') + '"'; }
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW:', e));
-}
-
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 App.renderHome();
 </script>
 </body>
