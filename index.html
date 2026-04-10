@@ -215,7 +215,7 @@
 
     <!-- Action buttons -->
     <div style="display:flex;gap:8px;margin-bottom:8px">
-      <button class="btn btn-primary" style="flex:1" onclick="App.openNewWeekend()">+ New Track Weekend</button>
+      <button class="btn btn-primary" style="flex:1" onclick="App.openNewWeekend()">+ New Track Day/Weekend</button>
       <button class="btn btn-gold" id="btn-log" onclick="App.openLogReading()" style="flex:1;display:none">Log Reading</button>
     </div>
     <button class="btn btn-secondary btn-sm" onclick="App.exportCSV()" style="width:100%;margin-bottom:14px">Export CSV</button>
@@ -260,15 +260,15 @@
           </tr>
         </thead>
         <tbody id="readings-tbody">
-          <tr><td colspan="9" style="text-align:center;padding:18px;color:var(--text-dim)">Select a Track Weekend below</td></tr>
+          <tr><td colspan="9" style="text-align:center;padding:18px;color:var(--text-dim)">Select a Track Day/Weekend below</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Track Weekends List -->
-    <div class="section-header">Track Weekends</div>
+    <!-- Track Days/Weekends List -->
+    <div class="section-header">Track Days / Weekends</div>
     <div id="weekends-list">
-      <div class="empty-state"><div class="es-icon">🏎️</div>No track weekends yet.<br>Tap "+ New Track Weekend" to start.</div>
+      <div class="empty-state"><div class="es-icon">🏎️</div>No track days yet.<br>Tap "+ New Track Day/Weekend" to start.</div>
     </div>
     <div class="bottom-pad"></div>
   </div>
@@ -278,7 +278,7 @@
 <div class="modal-overlay" id="modal-new-weekend">
   <div class="modal">
     <div class="modal-title">
-      <span>New Track Weekend</span>
+      <span>New Track Day/Weekend</span>
       <button class="modal-close" onclick="App.closeNewWeekend()">×</button>
     </div>
     <div class="form-group">
@@ -289,7 +289,7 @@
       <label>Car / Setup Notes (optional)</label>
       <textarea id="nw-notes" placeholder="e.g. Michelin PS4S, stock suspension"></textarea>
     </div>
-    <button class="btn btn-primary" onclick="App.createWeekend()">Start Weekend →</button>
+    <button class="btn btn-primary" onclick="App.createWeekend()">Start →</button>
     <div style="height:env(safe-area-inset-bottom,12px)"></div>
   </div>
 </div>
@@ -298,7 +298,7 @@
 <div class="modal-overlay" id="modal-edit-weekend">
   <div class="modal">
     <div class="modal-title">
-      <span>Edit Track Weekend</span>
+      <span>Edit Track Day/Weekend</span>
       <button class="modal-close" onclick="App.closeEditWeekend()">×</button>
     </div>
     <div class="form-group">
@@ -311,7 +311,7 @@
     </div>
     <button class="btn btn-primary" onclick="App.saveEditWeekend()">Save Changes</button>
     <div style="margin-top:10px">
-      <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red)" onclick="App.deleteCurrentWeekend()">Delete Weekend & All Readings</button>
+      <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red)" onclick="App.deleteCurrentWeekend()">Delete & All Readings</button>
     </div>
     <div style="height:env(safe-area-inset-bottom,12px)"></div>
   </div>
@@ -489,16 +489,17 @@ const App = {
     const readings = DB.getR();
     const el = document.getElementById('weekends-list');
     if (!weekends.length) {
-      el.innerHTML = '<div class="empty-state"><div class="es-icon">🏎️</div>No track weekends yet.<br>Tap "+ New Track Weekend" to start.</div>';
+      el.innerHTML = '<div class="empty-state"><div class="es-icon">🏎️</div>No track days yet.<br>Tap "+ New Track Day/Weekend" to start.</div>';
       return;
     }
     el.innerHTML = weekends.map(w => {
       const cnt = readings.filter(r => r.weekendId === w.id).length;
       const date = new Date(w.createdAt).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
       const sel = w.id === this.currentWeekendId;
+      const selLabel = sel ? ' <span style="font-size:9px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;color:var(--gold);background:#000;border:1px solid var(--gold);border-radius:3px;padding:1px 5px;margin-left:4px">Selected</span>' : '';
       return `<div class="list-item${sel?' selected':''}" onclick="App.selectWeekend('${w.id}')">
         <div class="li-main">
-          <div class="li-title">${esc(w.name)}</div>
+          <div class="li-title">${esc(w.name)}${selLabel}</div>
           <div class="li-sub">${date}${w.notes ? ' · ' + esc(w.notes.slice(0,40)) : ''}</div>
         </div>
         <span class="li-badge">${cnt}</span>
@@ -560,7 +561,7 @@ const App = {
     document.getElementById('reading-count').textContent = all.length ? all.length + ' reading' + (all.length !== 1 ? 's' : '') : '';
     const tbody = document.getElementById('readings-tbody');
     if (!all.length) {
-      const msg = wid ? 'No readings yet — tap "Log Reading"' : 'Select a Track Weekend below';
+      const msg = wid ? 'No readings yet — tap "Log Reading"' : 'Select a Track Day/Weekend below';
       tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:18px;color:var(--text-dim)">${msg}</td></tr>`;
       return;
     }
@@ -581,12 +582,33 @@ const App = {
       const sessNums = Object.keys(dg.sessions).map(Number).sort((a,b) => b - a);
       sessNums.forEach(sn => {
         const rows = dg.sessions[sn].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        const cold = rows.find(r => r.state === 'cold');
+        const hot  = rows.find(r => r.state === 'hot');
+        // Delta row: shown after both cold+hot exist
+        let deltaRow = '';
+        if (cold && hot) {
+          const d = (cw, hw) => (cw !== null && cw !== undefined && hw !== null && hw !== undefined) ? (hw - cw) : null;
+          const dFL = d(cold.FL, hot.FL), dFR = d(cold.FR, hot.FR);
+          const dRL = d(cold.RL, hot.RL), dRR = d(cold.RR, hot.RR);
+          const avgOf = vals => { const v = vals.filter(x => x !== null); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; };
+          const frontAvg = avgOf([dFL, dFR]);
+          const rearAvg  = avgOf([dRL, dRR]);
+          const fmt = v => v === null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1);
+          const col = v => v === null ? 'var(--text-dim)' : v > 0 ? '#ff6b6b' : '#58a6ff';
+          const dCell = (v, label) => `<td colspan="2" style="text-align:center;padding:5px 8px"><div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px">${label} avg Δ</div><div style="font-size:14px;font-weight:800;color:${col(v)}">${fmt(v)} PSI</div></td>`;
+          deltaRow = `<tr style="background:rgba(197,160,40,0.06);border-top:1px dashed var(--border)">
+            <td style="font-size:10px;color:var(--text-dim);padding:5px 10px;text-transform:uppercase;letter-spacing:0.5px" colspan="3">🌡 Hot vs Cold</td>
+            ${dCell(frontAvg,'Front')}${dCell(rearAvg,'Rear')}
+            <td colspan="2"></td>
+          </tr>`;
+        }
+        const rowspan = rows.length + (cold && hot ? 1 : 0);
         rows.forEach((r, ri) => {
           const isCold = r.state === 'cold';
           const cls = isCold ? 'cold' : 'hot';
           const time = new Date(r.timestamp).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
           const cell = w => (r[w] !== null && r[w] !== undefined) ? `<td class="td-psi ${cls}">${r[w]}</td>` : `<td class="td-psi empty">—</td>`;
-          const sessCell = ri === 0 ? `<td class="td-sess" rowspan="${rows.length}">S${sn}</td>` : '';
+          const sessCell = ri === 0 ? `<td class="td-sess" rowspan="${rowspan}">S${sn}</td>` : '';
           html += `<tr class="row-${cls}">${sessCell}
             <td class="td-time">${time}</td>
             <td class="td-state">${isCold ? '❄️' : '🔥'}</td>
@@ -598,6 +620,7 @@ const App = {
             </td>
           </tr>`;
         });
+        html += deltaRow;
       });
     });
     tbody.innerHTML = html;
@@ -617,7 +640,7 @@ const App = {
     DB.addW(w);
     this.closeNewWeekend();
     this.selectWeekend(w.id);
-    this.toast('TRACK WEEKEND STARTED');
+    this.toast('TRACK DAY STARTED');
   },
 
   // ======= EDIT WEEKEND =======
@@ -657,7 +680,7 @@ const App = {
 
   // ======= LOG READING =======
   openLogReading() {
-    if (!this.currentWeekendId) { alert('Select a Track Weekend first.'); return; }
+    if (!this.currentWeekendId) { alert('Select a Track Day/Weekend first.'); return; }
     const today = todayStr();
     this.lrDate = today;
     const { sessionNum, hcState } = this.calcNextSession(this.currentWeekendId, today);
