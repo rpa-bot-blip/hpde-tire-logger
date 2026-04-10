@@ -51,9 +51,12 @@
       background-position: center 40%;
       background-attachment: local;
     }
+    #view-home .content {
+      position: relative;
+    }
     #view-home .content::before {
       content: '';
-      position: fixed;
+      position: absolute;
       inset: 0;
       background: rgba(13,17,23,0.88);
       pointer-events: none;
