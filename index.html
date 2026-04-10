@@ -887,7 +887,8 @@ const GIST_ID    = '70e3cd6829d8ddb95cc8d7765fbf4f0d';
 const GIST_FILE  = 'tire-logger-data.json';
 
 const Sync = {
-  _syncing: false,
+  _pushTimer: null,
+  _pulling: false,
 
   setSyncStatus(state, msg) {
     const dot   = document.getElementById('sync-dot');
@@ -898,78 +899,99 @@ const Sync = {
     label.textContent = msg;
   },
 
+  // Union merge: all records from both sides, remote wins on id conflict
+  _merge(local, remote) {
+    const map = {};
+    local.forEach(x => map[x.id] = x);
+    remote.forEach(x => map[x.id] = x);
+    return Object.values(map);
+  },
+
   async pull() {
+    if (this._pulling) return;
+    this._pulling = true;
     this.setSyncStatus('busy', 'Syncing…');
     try {
       const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
         headers: { 'Authorization': `token ${GIST_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
       });
-      if (!res.ok) throw new Error('fetch ' + res.status);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const gist = await res.json();
       const raw = gist.files[GIST_FILE]?.content;
-      if (!raw) { this.setSyncStatus('ok', 'Synced'); return; }
-      const remote = JSON.parse(raw);
-      // Merge: take whichever side is newer per-record
-      const localW = DB.getW();
-      const localR = DB.getR();
-      const remoteW = remote.weekends || [];
-      const remoteR = remote.readings || [];
-      // Simple union merge by id (remote wins on conflict for simplicity)
-      const mergeById = (local, remote) => {
-        const map = {};
-        local.forEach(x => map[x.id] = x);
-        remote.forEach(x => map[x.id] = x); // remote overwrites
-        return Object.values(map);
-      };
-      const mergedW = mergeById(localW, remoteW);
-      const mergedR = mergeById(localR, remoteR);
-      _origSaveW(mergedW);
-      _origSaveR(mergedR);
-      // Save merged back to gist
-      await this._push(mergedW, mergedR);
+      const remote = raw ? JSON.parse(raw) : { weekends: [], readings: [] };
+
+      // Also check old hpde_batches key in case device hasn't fully migrated
+      const oldBatches = JSON.parse(localStorage.getItem('hpde_batches') || '[]');
+      const oldR = oldBatches.map(b => ({
+        id: b.id, weekendId: b.sessionId,
+        date: b.timestamp ? b.timestamp.slice(0,10) : new Date().toISOString().slice(0,10),
+        sessionNum: parseInt((b.runName||'1').match(/\d+/)?.[0]||'1'),
+        timestamp: b.timestamp, state: b.state||'cold',
+        ambientTemp: b.ambientTemp||null, conditions: b.conditions||'Dry',
+        note: b.note||'',
+        FL: b.FL??null, FR: b.FR??null, RL: b.RL??null, RR: b.RR??null
+      }));
+
+      const mergedW = this._merge(DB.getW(), remote.weekends || []);
+      const mergedR = this._merge(this._merge(DB.getR(), oldR), remote.readings || []);
+
+      // Write merged data directly to localStorage (bypass patched methods)
+      localStorage.setItem('hpde_weekends', JSON.stringify(mergedW));
+      localStorage.setItem('hpde_readings', JSON.stringify(mergedR));
+
+      // Push merged result back to Gist
+      await this._rawPush(mergedW, mergedR);
+
       App.renderWeekends();
       App.renderTable();
-      App.updateContextBar();
+      if (App.currentWeekendId) App.updateContextBar();
       this.setSyncStatus('ok', 'Synced ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
     } catch(e) {
-      console.error('Sync pull error', e);
-      this.setSyncStatus('error', 'Sync failed');
+      console.error('Sync pull error:', e);
+      this.setSyncStatus('error', 'Sync failed — ' + e.message);
+    } finally {
+      this._pulling = false;
     }
   },
 
-  async push() {
-    const w = DB.getW();
-    const r = DB.getR();
+  // Debounced push — waits 600ms after last write before firing
+  schedulePush() {
+    clearTimeout(this._pushTimer);
+    this._pushTimer = setTimeout(() => this._doPush(), 600);
+  },
+
+  async _doPush() {
+    if (this._pulling) return; // don't push while a pull is in progress
     try {
-      await this._push(w, r);
+      await this._rawPush(DB.getW(), DB.getR());
       this.setSyncStatus('ok', 'Synced ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
     } catch(e) {
-      console.error('Sync push error', e);
-      this.setSyncStatus('error', 'Sync failed');
+      console.error('Sync push error:', e);
+      this.setSyncStatus('error', 'Sync failed — ' + e.message);
     }
   },
 
-  async _push(weekends, readings) {
+  async _rawPush(weekends, readings) {
+    this.setSyncStatus('busy', 'Saving…');
     const payload = JSON.stringify({ weekends, readings, lastModified: new Date().toISOString() });
     const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method: 'PATCH',
       headers: { 'Authorization': `token ${GIST_TOKEN}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ files: { [GIST_FILE]: { content: payload } } })
     });
-    if (!res.ok) throw new Error('push ' + res.status);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
   }
 };
 
-// Patch DB methods to auto-push after writes (guarded to prevent re-entrancy)
-let _syncPending = false;
+// Patch DB.saveW and DB.saveR to schedule a push after every write
 const _origSaveW = DB.saveW.bind(DB);
-DB.saveW = function(d) { _origSaveW(d); if (!_syncPending) { _syncPending = true; setTimeout(() => { _syncPending = false; Sync.push(); }, 300); } };
+DB.saveW = function(d) { _origSaveW(d); Sync.schedulePush(); };
 const _origSaveR = DB.saveR.bind(DB);
-DB.saveR = function(d) { _origSaveR(d); if (!_syncPending) { _syncPending = true; setTimeout(() => { _syncPending = false; Sync.push(); }, 300); } };
+DB.saveR = function(d) { _origSaveR(d); Sync.schedulePush(); };
 
 App.syncNow = function() { Sync.pull(); };
 
-// Pull on load
+// Init
 App.renderWeekends();
 App.renderTable();
 Sync.pull();
