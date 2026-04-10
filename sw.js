@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hpde-tire-logger-v1';
+const CACHE_NAME = 'hpde-tire-logger-v4';
 const ASSETS = [
   './index.html',
   './manifest.json',
