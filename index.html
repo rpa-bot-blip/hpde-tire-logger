@@ -923,8 +923,8 @@ const Sync = {
       };
       const mergedW = mergeById(localW, remoteW);
       const mergedR = mergeById(localR, remoteR);
-      DB.saveW(mergedW);
-      DB.saveR(mergedR);
+      _origSaveW(mergedW);
+      _origSaveR(mergedR);
       // Save merged back to gist
       await this._push(mergedW, mergedR);
       App.renderWeekends();
@@ -960,11 +960,12 @@ const Sync = {
   }
 };
 
-// Patch DB methods to auto-push after writes
+// Patch DB methods to auto-push after writes (guarded to prevent re-entrancy)
+let _syncPending = false;
 const _origSaveW = DB.saveW.bind(DB);
-DB.saveW = function(d) { _origSaveW(d); Sync.push(); };
+DB.saveW = function(d) { _origSaveW(d); if (!_syncPending) { _syncPending = true; setTimeout(() => { _syncPending = false; Sync.push(); }, 300); } };
 const _origSaveR = DB.saveR.bind(DB);
-DB.saveR = function(d) { _origSaveR(d); Sync.push(); };
+DB.saveR = function(d) { _origSaveR(d); if (!_syncPending) { _syncPending = true; setTimeout(() => { _syncPending = false; Sync.push(); }, 300); } };
 
 App.syncNow = function() { Sync.pull(); };
 
