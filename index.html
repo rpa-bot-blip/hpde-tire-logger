@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-title" content="Tire Log">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.svg">
-  <title>HPDE Tire Logger</title>
+  <title>Porsche Motorsport · Tire Logger</title>
   <style>
     :root {
       --bg: #0d1117;
@@ -18,9 +18,9 @@
       --text-muted: #8b949e;
       --text-dim: #6e7681;
       --blue: #58a6ff;
-      --purple: #a371f7;
       --green: #3fb950;
-      --red: #f85149;
+      --red: #D5001C;       /* Porsche red */
+      --gold: #C5A028;      /* Porsche gold */
       --orange: #e3b341;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -34,194 +34,268 @@
     .view { display: none; flex-direction: column; min-height: 100vh; }
     .view.active { display: flex; }
 
-    /* HEADER */
-    .header {
-      background: var(--card); border-bottom: 1px solid var(--border);
-      padding: 14px 16px; display: flex; align-items: center; gap: 10px;
-      position: sticky; top: 0; z-index: 10;
+    /* ===== PORSCHE HOME HEADER ===== */
+    .porsche-header {
+      background: #000;
+      padding: 0;
+      border-bottom: 3px solid var(--red);
     }
-    .header h1 { font-size: 17px; font-weight: 600; color: var(--text); flex: 1; }
-    .header .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-    .back-btn {
-      background: none; border: none; color: var(--blue);
-      font-size: 16px; font-weight: 500; cursor: pointer; padding: 4px 0;
+    .porsche-banner {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #0a0a0a 100%);
+      padding: 28px 20px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .porsche-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent);
+    }
+    .porsche-wordmark {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .porsche-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+    .porsche-title span { color: var(--red); }
+    .porsche-subtitle {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 6px;
+      opacity: 0.8;
+    }
+    /* Racing stripe */
+    .racing-stripe {
+      height: 4px;
+      background: repeating-linear-gradient(90deg, var(--red) 0px, var(--red) 60px, transparent 60px, transparent 80px, var(--gold) 80px, var(--gold) 84px, transparent 84px, transparent 100px);
     }
 
-    /* CONTENT */
+    /* STANDARD HEADER */
+    .header {
+      background: #000; border-bottom: 2px solid var(--red);
+      padding: 13px 16px; display: flex; align-items: center; gap: 10px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .header h1 { font-size: 17px; font-weight: 700; color: #fff; flex: 1; letter-spacing: 0.5px; text-transform: uppercase; }
+    .header .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; text-transform: none; font-weight: 400; }
+    .back-btn {
+      background: none; border: none; color: var(--gold);
+      font-size: 16px; font-weight: 700; cursor: pointer; padding: 4px 0;
+    }
+
     .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
 
     /* BUTTONS */
     .btn {
       display: flex; align-items: center; justify-content: center;
-      gap: 8px; padding: 13px 20px; border-radius: 10px; border: none;
-      font-size: 16px; font-weight: 600; cursor: pointer; min-height: 48px;
-      transition: opacity 0.15s; width: 100%;
+      gap: 8px; padding: 14px 20px; border-radius: 4px; border: none;
+      font-size: 15px; font-weight: 800; cursor: pointer; min-height: 50px;
+      transition: opacity 0.15s; width: 100%; text-transform: uppercase; letter-spacing: 1px;
     }
     .btn:active { opacity: 0.7; }
-    .btn-primary { background: var(--blue); color: #0d1117; }
-    .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
-    .btn-sm { font-size: 13px; padding: 7px 12px; min-height: 34px; border-radius: 8px; width: auto; }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); text-transform: none; letter-spacing: 0; font-weight: 600; }
+    .btn-sm { font-size: 12px; padding: 7px 12px; min-height: 34px; border-radius: 4px; width: auto; }
+    .btn-gold { background: var(--gold); color: #000; }
 
     /* FORM */
     .form-group { margin-bottom: 14px; }
-    label {
-      display: block; font-size: 12px; font-weight: 600; color: var(--text-muted);
-      margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px;
-    }
+    label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
     input[type="text"], input[type="number"], textarea, select {
       width: 100%; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; padding: 11px 13px; font-size: 16px; color: var(--text);
+      border-radius: 4px; padding: 11px 13px; font-size: 16px; color: var(--text);
       appearance: none; -webkit-appearance: none; outline: none; min-height: 46px;
     }
-    input:focus, textarea:focus, select:focus { border-color: var(--blue); }
+    input:focus, textarea:focus, select:focus { border-color: var(--red); }
     textarea { resize: none; min-height: 68px; font-family: inherit; font-size: 15px; }
     .row { display: flex; gap: 10px; }
     .row .form-group { flex: 1; }
 
-    /* HOME */
-    .hero { text-align: center; padding: 24px 0 20px; }
-    .hero-icon { font-size: 48px; margin-bottom: 10px; }
-    .hero h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-    .hero p { font-size: 13px; color: var(--text-muted); }
-    .section-header { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 18px 0 8px; }
+    /* HOME SESSION LIST */
+    .section-header { font-size: 11px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     .session-item {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 13px 14px; margin-bottom: 8px; cursor: pointer;
+      background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--red);
+      border-radius: 4px; padding: 13px 14px; margin-bottom: 8px; cursor: pointer;
       display: flex; align-items: center; gap: 10px;
     }
-    .session-item:active { border-color: var(--blue); }
+    .session-item:active { border-left-color: var(--gold); }
     .session-item .si-main { flex: 1; min-width: 0; }
-    .session-item .si-title { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .session-item .si-title { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .session-item .si-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
     .session-item .si-badge { background: var(--border); color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
-    .chevron { color: var(--text-dim); font-size: 14px; }
+    .chevron { color: var(--gold); font-size: 16px; font-weight: 700; }
     .empty-state { text-align: center; padding: 28px 20px; color: var(--text-dim); font-size: 14px; }
     .empty-state .es-icon { font-size: 32px; margin-bottom: 8px; }
 
     /* SESSION INFO BAR */
     .session-info-bar {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
+      background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--gold);
+      border-radius: 4px; padding: 10px 14px; margin-bottom: 14px;
       display: flex; gap: 16px; flex-wrap: wrap;
     }
-    .sib-item { font-size: 12px; }
     .sib-item .sib-label { color: var(--text-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
-    .sib-item .sib-val { color: var(--text-muted); font-weight: 500; margin-top: 1px; }
+    .sib-item .sib-val { color: var(--text-muted); font-weight: 500; margin-top: 1px; font-size: 12px; }
 
-    /* READINGS TABLE */
+    /* ===== READINGS TABLE ===== */
     .table-wrap {
       overflow-x: auto; -webkit-overflow-scrolling: touch;
-      border: 1px solid var(--border); border-radius: 10px;
-      margin-bottom: 16px; max-height: 320px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-bottom: 16px; max-height: 340px; overflow-y: auto;
     }
-    table { border-collapse: collapse; min-width: 100%; font-size: 13px; }
+    table { border-collapse: collapse; min-width: 100%; font-size: 14px; }
     thead th {
-      background: var(--card); color: var(--text-muted); font-size: 10px;
-      font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
-      padding: 8px 10px; border-bottom: 1px solid var(--border);
+      background: #000; color: var(--gold); font-size: 11px;
+      font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px;
+      padding: 9px 12px; border-bottom: 2px solid var(--red);
       white-space: nowrap; position: sticky; top: 0; z-index: 2;
     }
     tbody tr { border-bottom: 1px solid var(--border); }
     tbody tr:last-child { border-bottom: none; }
     tbody tr.row-cold { background: rgba(88,166,255,0.04); }
-    tbody tr.row-hot  { background: rgba(227,179,65,0.04); }
-    tbody td { padding: 9px 10px; white-space: nowrap; vertical-align: middle; }
-    td.td-time { color: var(--text-muted); font-size: 11px; min-width: 85px; }
-    td.td-state { font-size: 13px; text-align: center; min-width: 36px; }
-    td.td-psi { text-align: center; font-weight: 600; min-width: 44px; }
+    tbody tr.row-hot  { background: rgba(213,0,28,0.06); }
+    tbody td { padding: 10px 12px; white-space: nowrap; vertical-align: middle; color: var(--text); font-size: 14px; }
+    td.td-time { color: var(--text-muted); font-size: 12px; min-width: 90px; }
+    td.td-state { font-size: 15px; text-align: center; min-width: 34px; }
+    td.td-psi { text-align: center; font-weight: 700; font-size: 15px; min-width: 48px; }
     td.td-psi.cold { color: var(--blue); }
-    td.td-psi.hot  { color: var(--orange); }
-    td.td-psi.empty { color: var(--text-dim); font-weight: 400; font-size: 11px; }
-    td.td-notes { color: var(--text-muted); font-size: 11px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
-    td.td-actions { padding: 4px 6px; white-space: nowrap; }
+    td.td-psi.hot  { color: var(--red); }
+    td.td-psi.empty { color: var(--text-dim); font-weight: 400; font-size: 12px; }
+    td.td-run { color: var(--gold); font-weight: 700; font-size: 12px; min-width: 64px; vertical-align: middle; }
+    td.td-notes { color: var(--text-muted); font-size: 12px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+    td.td-actions { padding: 4px 8px; white-space: nowrap; }
     .del-btn { background: none; border: none; color: var(--red); font-size: 17px; cursor: pointer; padding: 4px; }
-    .edit-btn { background: none; border: none; color: var(--blue); font-size: 14px; cursor: pointer; padding: 4px; }
+    .edit-btn { background: none; border: none; color: var(--gold); font-size: 14px; cursor: pointer; padding: 4px; }
 
-    /* EDIT MODAL */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 50;
-      align-items: flex-end; justify-content: center;
+    /* ===== 911 TOP VIEW ===== */
+    .car-diagram-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 0 8px;
     }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px 16px 0 0; padding: 20px 16px;
-      width: 100%; max-width: 600px;
-      max-height: 90vh; overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+    .car-diagram-wrap svg { max-width: 280px; width: 100%; }
+
+    /* Tire input overlaid on diagram — 2x2 grid */
+    .tire-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
     }
-    .modal-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 0 4px; }
+    .tire-input-cell {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 10px 8px;
+      border-top: 3px solid var(--border);
+      transition: border-top-color 0.15s;
+    }
+    .tire-input-cell.cold-active { border-top-color: var(--blue); }
+    .tire-input-cell.hot-active  { border-top-color: var(--red); }
+    .itc-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .tire-input-cell input[type="number"] {
+      padding: 8px 6px; font-size: 24px; font-weight: 800;
+      min-height: 50px; text-align: center; border-radius: 4px; width: 100%;
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      appearance: none; -webkit-appearance: none; outline: none;
+    }
+    .tire-input-cell input:focus { border-color: var(--red); }
+    .psi-label { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 3px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
 
     /* LOG FORM */
     .log-form-card {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 14px; margin-bottom: 14px;
+      border-radius: 6px; padding: 14px; margin-bottom: 14px;
     }
-    .log-form-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+    .log-form-title { font-size: 11px; font-weight: 800; color: var(--gold); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 
     /* Big Hot/Cold Toggle */
     .hc-record-toggle {
       display: flex; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 10px; overflow: hidden; margin-bottom: 14px;
+      border-radius: 4px; overflow: hidden; margin-bottom: 14px;
     }
     .hc-record-btn {
       flex: 1; padding: 12px; border: none; background: transparent;
-      font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.15s;
-      color: var(--text-muted);
+      font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.15s;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .hc-record-btn.cold.active { background: var(--blue); color: #0d1117; }
-    .hc-record-btn.hot.active  { background: var(--orange); color: #0d1117; }
+    .hc-record-btn.cold.active { background: var(--blue); color: #fff; }
+    .hc-record-btn.hot.active  { background: var(--red); color: #fff; }
 
-    /* 2x2 Tire Inputs */
-    .input-tire-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+    /* EDIT MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8); z-index: 50;
+      align-items: flex-end; justify-content: center;
     }
-    .input-tire-cell {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 10px; padding: 10px;
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border); border-top: 3px solid var(--red);
+      border-radius: 12px 12px 0 0; padding: 20px 16px;
+      width: 100%; max-width: 600px;
+      max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
-    .itc-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
-    .input-tire-cell input[type="number"] {
-      padding: 8px 10px; font-size: 22px; font-weight: 700; min-height: 48px;
-      text-align: center; letter-spacing: -0.5px;
-    }
-    .psi-label { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+    .modal-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 0.5px; }
+    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 0 4px; }
 
     /* TOAST */
     .toast {
       position: fixed; bottom: 40px; left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: var(--green); color: #0d1117;
-      padding: 11px 22px; border-radius: 24px; font-size: 14px; font-weight: 600;
-      opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 100; white-space: nowrap;
+      background: var(--red); color: #fff;
+      padding: 11px 22px; border-radius: 4px; font-size: 13px; font-weight: 800;
+      opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 100;
+      white-space: nowrap; text-transform: uppercase; letter-spacing: 0.5px;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
     .divider { height: 1px; background: var(--border); margin: 14px 0; }
     .bottom-pad { height: env(safe-area-inset-bottom, 20px); }
     .flex-between { display: flex; align-items: center; justify-content: space-between; }
-    .section-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+    .section-label { font-size: 11px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
   </style>
 </head>
 <body>
 
 <!-- ==================== HOME ==================== -->
 <div id="view-home" class="view active">
-  <div class="header">
-    <h1>🏁 HPDE Tire Logger</h1>
-    <button class="btn btn-secondary btn-sm" onclick="App.exportCSV()">Export CSV</button>
-  </div>
-  <div class="content">
-    <div class="hero">
-      <div class="hero-icon">🏎️</div>
-      <h2>Track Day Logger</h2>
-      <p>Log tire pressures for every session</p>
+  <!-- Porsche branded header -->
+  <div class="porsche-header">
+    <div class="porsche-banner">
+      <div class="porsche-wordmark">Porsche Motorsport</div>
+      <div class="porsche-title">Tire <span>Logger</span></div>
+      <div class="porsche-subtitle">Track Performance Data</div>
     </div>
-    <button class="btn btn-primary" onclick="App.newSession()">+ New Session</button>
-    <div class="section-header">Recent Sessions</div>
+    <div class="racing-stripe"></div>
+  </div>
+
+  <div class="content" style="padding-top:20px">
+    <button class="btn btn-primary" onclick="App.newSession()">+ New Track Day</button>
+    <div style="margin-top:8px">
+      <button class="btn btn-secondary btn-sm" onclick="App.exportCSV()" style="width:100%">Export CSV</button>
+    </div>
+    <div class="section-header">Track Day Log</div>
     <div id="home-sessions-list">
-      <div class="empty-state"><div class="es-icon">📋</div>No sessions yet</div>
+      <div class="empty-state"><div class="es-icon">🏎️</div>No sessions yet.<br>Add your first track day.</div>
     </div>
     <div class="bottom-pad"></div>
   </div>
@@ -230,7 +304,7 @@
 <!-- ==================== NEW SESSION ==================== -->
 <div id="view-new-session" class="view">
   <div class="header">
-    <button class="back-btn" onclick="App.goHome()">‹ Back</button>
+    <button class="back-btn" onclick="App.goHome()">‹</button>
     <h1>New Track Day</h1>
   </div>
   <div class="content">
@@ -240,26 +314,24 @@
     </div>
     <div class="form-group">
       <label>Car / Setup Notes (optional)</label>
-      <textarea id="ns-notes" placeholder="e.g. stock suspension, cold start"></textarea>
+      <textarea id="ns-notes" placeholder="e.g. stock suspension, Michelin PS4S"></textarea>
     </div>
     <button class="btn btn-primary" onclick="App.createSession()">Start →</button>
     <div class="bottom-pad"></div>
   </div>
 </div>
 
-<!-- ==================== SESSION ==================== -->
+<!-- ==================== SESSION / TRACK DAY ==================== -->
 <div id="view-session" class="view">
   <div class="header">
-    <button class="back-btn" onclick="App.goHome()">‹ Back</button>
+    <button class="back-btn" onclick="App.goHome()">‹</button>
     <div style="flex:1">
-      <h1 id="sess-title">Track Day</h1>
+      <h1>Track Day</h1>
       <div class="subtitle" id="sess-subtitle"></div>
     </div>
   </div>
   <div class="content">
-
-    <!-- Session info bar -->
-    <div class="session-info-bar" id="sess-info-bar"></div>
+    <div class="session-info-bar" id="sess-info-bar" style="display:none"></div>
 
     <!-- Readings Table -->
     <div class="flex-between" style="margin-bottom:8px">
@@ -282,15 +354,16 @@
           </tr>
         </thead>
         <tbody id="readings-tbody">
-          <tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet</td></tr>
+          <tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Log Form -->
+    <!-- Session Data / Log Form -->
     <div class="log-form-card">
-      <div class="log-form-title">📝 Session Data</div>
-      <!-- Ambient temp + conditions inline -->
+      <div class="log-form-title">Session Data</div>
+
+      <!-- Conditions row -->
       <div class="row" style="margin-bottom:12px">
         <div class="form-group" style="margin-bottom:0">
           <label>Ambient Temp (°F)</label>
@@ -308,53 +381,142 @@
         </div>
       </div>
 
-      <!-- Run Name -->
+      <!-- Run name -->
       <div class="form-group" style="margin-bottom:12px">
         <label>Run Name</label>
         <input type="text" id="run-name" placeholder="e.g. Run 1, Morning, Session 2">
       </div>
 
-      <!-- Hot / Cold record-level toggle -->
+      <!-- Hot / Cold -->
       <div class="hc-record-toggle">
         <button class="hc-record-btn cold active" id="hc-cold" onclick="App.setHC('cold')">❄️ Cold — Before</button>
         <button class="hc-record-btn hot" id="hc-hot" onclick="App.setHC('hot')">🔥 Hot — After</button>
       </div>
 
-      <!-- 2x2 PSI inputs -->
-      <div class="input-tire-grid">
-        <div class="input-tire-cell">
+      <!-- 911 Top View Diagram + Inputs -->
+      <div class="car-diagram-wrap">
+        <svg viewBox="0 0 220 400" xmlns="http://www.w3.org/2000/svg">
+          <!-- ====== PORSCHE 911 TOP VIEW SVG ====== -->
+          <defs>
+            <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#1a1a1a"/>
+              <stop offset="50%" stop-color="#2a2a2a"/>
+              <stop offset="100%" stop-color="#1a1a1a"/>
+            </linearGradient>
+            <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a2a3a" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0a1a2a" stop-opacity="0.7"/>
+            </linearGradient>
+          </defs>
+
+          <!-- REAR BUMPER -->
+          <rect x="58" y="330" width="104" height="18" rx="4" fill="#111"/>
+          <rect x="66" y="332" width="88" height="10" rx="2" fill="#1a1a1a"/>
+          <!-- Rear lights -->
+          <rect x="60" y="332" width="26" height="8" rx="2" fill="#C5A028" opacity="0.7"/>
+          <rect x="134" y="332" width="26" height="8" rx="2" fill="#C5A028" opacity="0.7"/>
+
+          <!-- MAIN BODY (911 wide hips at rear) -->
+          <path d="M68,52 L152,52 C162,52 172,62 174,75 L180,140 C183,160 183,180 180,200 L178,270 C176,300 168,330 152,348 L68,348 C52,330 44,300 42,270 L40,200 C37,180 37,160 40,140 L46,75 C48,62 58,52 68,52 Z" fill="url(#bodyGrad)" stroke="#333" stroke-width="1"/>
+
+          <!-- ROOF/CABIN — 911 fastback profile -->
+          <path d="M82,95 L138,95 C148,95 155,100 157,110 L162,170 C163,185 155,195 145,195 L75,195 C65,195 57,185 58,170 L63,110 C65,100 72,95 82,95 Z" fill="url(#glassGrad)" stroke="#444" stroke-width="0.5"/>
+
+          <!-- WINDSHIELD (front) — raked -->
+          <path d="M84,95 L136,95 L148,115 L72,115 Z" fill="#1a3050" opacity="0.8" stroke="#555" stroke-width="0.5"/>
+
+          <!-- REAR WINDOW (fastback) -->
+          <path d="M76,175 L144,175 L150,195 L70,195 Z" fill="#0a1520" opacity="0.7" stroke="#333" stroke-width="0.5"/>
+
+          <!-- DOOR LINES -->
+          <line x1="43" y1="195" x2="177" y2="195" stroke="#444" stroke-width="0.7"/>
+
+          <!-- HOOD (engine in rear, frunk in front) -->
+          <rect x="75" y="52" width="70" height="38" rx="4" fill="#222" stroke="#333" stroke-width="0.5"/>
+          <!-- Frunk lines -->
+          <line x1="90" y1="58" x2="130" y2="58" stroke="#444" stroke-width="0.5"/>
+          <line x1="90" y1="84" x2="130" y2="84" stroke="#444" stroke-width="0.5"/>
+          <!-- Frunk latch -->
+          <circle cx="110" cy="71" r="3" fill="#333" stroke="#444" stroke-width="0.5"/>
+
+          <!-- ENGINE LID (rear, 911 has engine in back) -->
+          <rect x="70" y="300" width="80" height="40" rx="4" fill="#1e1e1e" stroke="#333" stroke-width="0.5"/>
+          <!-- Louvres -->
+          <line x1="78" y1="308" x2="142" y2="308" stroke="#333" stroke-width="1"/>
+          <line x1="78" y1="316" x2="142" y2="316" stroke="#333" stroke-width="1"/>
+          <line x1="78" y1="324" x2="142" y2="324" stroke="#333" stroke-width="1"/>
+          <line x1="78" y1="332" x2="142" y2="332" stroke="#333" stroke-width="1"/>
+
+          <!-- FRONT BUMPER -->
+          <path d="M78,34 L142,34 C155,34 165,42 166,52 L54,52 C55,42 65,34 78,34 Z" fill="#111" stroke="#333" stroke-width="0.5"/>
+          <!-- Front lights -->
+          <ellipse cx="82" cy="44" rx="12" ry="5" fill="#D5001C" opacity="0.5"/>
+          <ellipse cx="138" cy="44" rx="12" ry="5" fill="#D5001C" opacity="0.5"/>
+          <!-- Splitter -->
+          <rect x="72" y="34" width="76" height="4" rx="1" fill="#111"/>
+
+          <!-- REAR WING (911 integrated spoiler) -->
+          <rect x="50" y="340" width="120" height="6" rx="3" fill="#222" stroke="#D5001C" stroke-width="1"/>
+
+          <!-- SIDE MIRRORS -->
+          <ellipse cx="38" cy="102" rx="7" ry="4" fill="#1a1a1a" stroke="#333" stroke-width="0.5" transform="rotate(-10,38,102)"/>
+          <ellipse cx="182" cy="102" rx="7" ry="4" fill="#1a1a1a" stroke="#333" stroke-width="0.5" transform="rotate(10,182,102)"/>
+
+          <!-- TIRE POSITION MARKERS -->
+          <!-- FL -->
+          <circle cx="36" cy="78" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.7"/>
+          <text x="36" y="82" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff" opacity="0.9">FL</text>
+          <!-- FR -->
+          <circle cx="184" cy="78" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.7"/>
+          <text x="184" y="82" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff" opacity="0.9">FR</text>
+          <!-- RL -->
+          <circle cx="36" cy="295" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.7"/>
+          <text x="36" y="299" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff" opacity="0.9">RL</text>
+          <!-- RR -->
+          <circle cx="184" cy="295" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.7"/>
+          <text x="184" y="299" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff" opacity="0.9">RR</text>
+
+          <!-- Porsche crest placeholder on roof -->
+          <circle cx="110" cy="145" r="10" fill="none" stroke="#C5A028" stroke-width="1" opacity="0.4"/>
+          <text x="110" y="149" text-anchor="middle" font-size="9" fill="#C5A028" opacity="0.5">P</text>
+        </svg>
+      </div>
+
+      <!-- 2x2 PSI Inputs matching diagram layout -->
+      <div class="tire-inputs-grid" id="tire-inputs-grid">
+        <div class="tire-input-cell" id="cell-FL">
           <div class="itc-label">⬅ Front Left</div>
-          <input type="number" id="psi-FL" step="0.5" min="0" max="60" placeholder="0.0">
+          <input type="number" id="psi-FL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateCellState()">
           <div class="psi-label">PSI</div>
         </div>
-        <div class="input-tire-cell">
+        <div class="tire-input-cell" id="cell-FR">
           <div class="itc-label">Front Right ➡</div>
-          <input type="number" id="psi-FR" step="0.5" min="0" max="60" placeholder="0.0">
+          <input type="number" id="psi-FR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateCellState()">
           <div class="psi-label">PSI</div>
         </div>
-        <div class="input-tire-cell">
+        <div class="tire-input-cell" id="cell-RL">
           <div class="itc-label">⬅ Rear Left</div>
-          <input type="number" id="psi-RL" step="0.5" min="0" max="60" placeholder="0.0">
+          <input type="number" id="psi-RL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateCellState()">
           <div class="psi-label">PSI</div>
         </div>
-        <div class="input-tire-cell">
+        <div class="tire-input-cell" id="cell-RR">
           <div class="itc-label">Rear Right ➡</div>
-          <input type="number" id="psi-RR" step="0.5" min="0" max="60" placeholder="0.0">
+          <input type="number" id="psi-RR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateCellState()">
           <div class="psi-label">PSI</div>
         </div>
       </div>
 
       <div class="form-group" style="margin-bottom:14px">
         <label>Notes</label>
-        <input type="text" id="reading-notes" placeholder="e.g. slight push after session 2">
+        <input type="text" id="reading-notes" placeholder="e.g. slight push in high-speed corners">
       </div>
 
-      <button class="btn btn-primary" onclick="App.logReading()">💾 Log Reading</button>
+      <button class="btn btn-primary" onclick="App.logReading()">Log Reading</button>
     </div>
 
     <div class="divider"></div>
     <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red);margin-bottom:8px" onclick="App.deleteSession()">
-      🗑️ Delete Session
+      Delete Session
     </button>
     <div class="bottom-pad"></div>
   </div>
@@ -364,7 +526,7 @@
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <div class="modal-title">
-      <span>✏️ Edit Reading</span>
+      <span>Edit Reading</span>
       <button class="modal-close" onclick="App.closeEdit()">×</button>
     </div>
     <div class="form-group">
@@ -375,23 +537,23 @@
       <button class="hc-record-btn cold" id="edit-hc-cold" onclick="App.setEditHC('cold')">❄️ Cold — Before</button>
       <button class="hc-record-btn hot" id="edit-hc-hot" onclick="App.setEditHC('hot')">🔥 Hot — After</button>
     </div>
-    <div class="input-tire-grid">
-      <div class="input-tire-cell">
+    <div class="tire-inputs-grid">
+      <div class="tire-input-cell">
         <div class="itc-label">⬅ Front Left</div>
         <input type="number" id="edit-FL" step="0.5" min="0" max="60" placeholder="0.0">
         <div class="psi-label">PSI</div>
       </div>
-      <div class="input-tire-cell">
+      <div class="tire-input-cell">
         <div class="itc-label">Front Right ➡</div>
         <input type="number" id="edit-FR" step="0.5" min="0" max="60" placeholder="0.0">
         <div class="psi-label">PSI</div>
       </div>
-      <div class="input-tire-cell">
+      <div class="tire-input-cell">
         <div class="itc-label">⬅ Rear Left</div>
         <input type="number" id="edit-RL" step="0.5" min="0" max="60" placeholder="0.0">
         <div class="psi-label">PSI</div>
       </div>
-      <div class="input-tire-cell">
+      <div class="tire-input-cell">
         <div class="itc-label">Rear Right ➡</div>
         <input type="number" id="edit-RR" step="0.5" min="0" max="60" placeholder="0.0">
         <div class="psi-label">PSI</div>
@@ -402,8 +564,8 @@
       <input type="text" id="edit-notes" placeholder="">
     </div>
     <div class="row">
-      <button class="btn btn-primary" onclick="App.saveEdit()">Save Changes</button>
-      <button class="btn btn-secondary btn-sm" style="border-color:var(--red);color:var(--red);width:auto;padding:0 16px" onclick="App.deleteFromEdit()">Delete</button>
+      <button class="btn btn-primary" onclick="App.saveEdit()">Save</button>
+      <button class="btn btn-secondary btn-sm" style="border-color:var(--red);color:var(--red);width:auto;padding:0 18px" onclick="App.deleteFromEdit()">Delete</button>
     </div>
     <div style="height:env(safe-area-inset-bottom,12px)"></div>
   </div>
@@ -413,13 +575,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// =====================
-// DATA MODEL
-// Session: { id, event, track, type, num, notes, ambientTemp, conditions, createdAt }
-// Batch:   { id, sessionId, timestamp, state:'cold'|'hot', note, FL, FR, RL, RR }
-//           FL/FR/RL/RR: number (PSI) or null
-// =====================
-
 const DB = {
   getSessions()    { return JSON.parse(localStorage.getItem('hpde_sessions') || '[]'); },
   saveSessions(d)  { localStorage.setItem('hpde_sessions', JSON.stringify(d)); },
@@ -430,9 +585,7 @@ const DB = {
   deleteBatch(id)  { this.saveBatches(this.getBatches().filter(b => b.id !== id)); },
   deleteSession(id){ this.saveSessions(this.getSessions().filter(s => s.id !== id)); this.saveBatches(this.getBatches().filter(b => b.sessionId !== id)); },
   getSessionBatches(sid) { return this.getBatches().filter(b => b.sessionId === sid); },
-
   migrate() {
-    // Migrate old per-wheel entry format
     const old = localStorage.getItem('hpde_entries');
     if (!old) return;
     try {
@@ -444,33 +597,27 @@ const DB = {
         groups[key][e.wheel] = e.psi;
       });
       const batches = this.getBatches();
-      Object.values(groups).forEach(g => {
-        batches.push({ id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2), ...g });
-      });
+      Object.values(groups).forEach(g => batches.push({ id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2), runName: 'Run 1', ...g }));
       this.saveBatches(batches);
       localStorage.removeItem('hpde_entries');
     } catch(e) {}
-
-    // Migrate old batch format (per-wheel object)
+    // Fix old batch object format
     const batches = this.getBatches().map(b => {
-      ['FL','FR','RL','RR'].forEach(w => {
-        if (b[w] && typeof b[w] === 'object') {
-          b[w] = b[w].psi || null;
-          if (!b.state && b[w] && b[w].state) b.state = b[w].state;
-        }
-      });
+      ['FL','FR','RL','RR'].forEach(w => { if (b[w] && typeof b[w] === 'object') b[w] = b[w].psi || null; });
       if (!b.state) b.state = 'cold';
+      if (!b.runName) b.runName = 'Run 1';
       return b;
     });
     this.saveBatches(batches);
   }
 };
-
 DB.migrate();
 
 const App = {
   currentSessionId: null,
   hcState: 'cold',
+  _editId: null,
+  _editHC: 'cold',
 
   showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -478,17 +625,13 @@ const App = {
     window.scrollTo(0,0);
   },
 
-  goHome() {
-    this.currentSessionId = null;
-    this.renderHome();
-    this.showView('view-home');
-  },
+  goHome() { this.currentSessionId = null; this.renderHome(); this.showView('view-home'); },
 
   renderHome() {
     const sessions = DB.getSessions();
     const el = document.getElementById('home-sessions-list');
     if (!sessions.length) {
-      el.innerHTML = '<div class="empty-state"><div class="es-icon">📋</div>No sessions yet.<br>Tap "+ New Session" to get started.</div>';
+      el.innerHTML = '<div class="empty-state"><div class="es-icon">🏎️</div>No track days logged yet.<br>Tap "+ New Track Day" to start.</div>';
       return;
     }
     const batches = DB.getBatches();
@@ -497,7 +640,7 @@ const App = {
       const date = new Date(s.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
       return `<div class="session-item" onclick="App.openSession('${s.id}')">
         <div class="si-main">
-          <div class="si-title">${esc(s.event || s.track || 'Session')}</div>
+          <div class="si-title">${esc(s.event || s.track || 'Track Day')}</div>
           <div class="si-sub">${date}${s.notes ? ' · ' + esc(s.notes.slice(0,40)) : ''}</div>
         </div>
         <span class="si-badge">${count} reading${count!==1?'s':''}</span>
@@ -514,13 +657,7 @@ const App = {
   createSession() {
     const event = document.getElementById('ns-event').value.trim();
     if (!event) { alert('Enter an event / track name.'); return; }
-    const s = {
-      id: 'sess_' + Date.now(),
-      event,
-      track: event, // keep track field for backward compat
-      notes: document.getElementById('ns-notes').value.trim(),
-      createdAt: new Date().toISOString()
-    };
+    const s = { id: 'sess_' + Date.now(), event, track: event, notes: document.getElementById('ns-notes').value.trim(), createdAt: new Date().toISOString() };
     DB.addSession(s);
     this.openSession(s.id);
   },
@@ -529,23 +666,12 @@ const App = {
     this.currentSessionId = id;
     const s = DB.getSessions().find(s => s.id === id);
     if (!s) { this.goHome(); return; }
-
-    document.getElementById('sess-title').textContent = 'Track Day';
     document.getElementById('sess-subtitle').textContent = s.event || s.track || '';
-
-    // Info bar — show notes if any
     const bar = document.getElementById('sess-info-bar');
-    const items = [];
-    if (s.notes) items.push({ label: 'Car / Setup', val: s.notes });
-    bar.innerHTML = items.length
-      ? items.map(i => `<div class="sib-item"><div class="sib-label">${i.label}</div><div class="sib-val">${esc(i.val)}</div></div>`).join('')
-      : '';
-    if (!items.length) bar.style.display = 'none'; else bar.style.display = '';
-
-    // Restore ambient temp / conditions fields to blank
+    if (s.notes) { bar.innerHTML = `<div class="sib-item"><div class="sib-label">Car / Setup</div><div class="sib-val">${esc(s.notes)}</div></div>`; bar.style.display = ''; }
+    else bar.style.display = 'none';
     document.getElementById('sess-temp').value = '';
     document.getElementById('sess-conditions').value = 'Dry';
-
     this.resetForm();
     this.renderTable();
     this.showView('view-session');
@@ -554,18 +680,30 @@ const App = {
   resetForm() {
     ['FL','FR','RL','RR'].forEach(w => document.getElementById('psi-'+w).value = '');
     document.getElementById('reading-notes').value = '';
-    // Keep run name so next reading (hot) auto-fills the same run
     this.setHC('cold');
+    this.updateCellState();
   },
 
   setHC(state) {
     this.hcState = state;
     document.getElementById('hc-cold').classList.toggle('active', state === 'cold');
     document.getElementById('hc-hot').classList.toggle('active', state === 'hot');
+    this.updateCellState();
+  },
+
+  updateCellState() {
+    const cls = this.hcState === 'cold' ? 'cold-active' : 'hot-active';
+    const rem = this.hcState === 'cold' ? 'hot-active' : 'cold-active';
+    ['FL','FR','RL','RR'].forEach(w => {
+      const cell = document.getElementById('cell-'+w);
+      if (!cell) return;
+      const v = document.getElementById('psi-'+w).value;
+      if (v !== '') { cell.classList.add(cls); cell.classList.remove(rem); }
+      else { cell.classList.remove(cls); cell.classList.remove(rem); }
+    });
   },
 
   logReading() {
-    const wheels = ['FL','FR','RL','RR'];
     const batch = {
       id: 'b_' + Date.now(),
       sessionId: this.currentSessionId,
@@ -577,10 +715,9 @@ const App = {
       note: document.getElementById('reading-notes').value.trim()
     };
     let hasAny = false;
-    wheels.forEach(w => {
+    ['FL','FR','RL','RR'].forEach(w => {
       const v = document.getElementById('psi-'+w).value;
-      const psi = parseFloat(v);
-      batch[w] = (!isNaN(psi) && v !== '') ? psi : null;
+      batch[w] = (v !== '' && !isNaN(parseFloat(v))) ? parseFloat(v) : null;
       if (batch[w] !== null) hasAny = true;
     });
     if (!hasAny) { alert('Enter at least one tire pressure.'); return; }
@@ -588,29 +725,22 @@ const App = {
     const runName = document.getElementById('run-name').value.trim() || 'Run 1';
     DB.addBatch(batch);
     this.resetForm();
-    // Keep run name, flip to hot if we just logged cold
     document.getElementById('run-name').value = runName;
     if (wasState === 'cold') this.setHC('hot');
     this.renderTable();
-    const stateLabel = wasState === 'cold' ? '❄️ Cold' : '🔥 Hot';
-    this.toast('✅ ' + stateLabel + ' logged — ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
+    this.toast((wasState === 'cold' ? '❄️ COLD' : '🔥 HOT') + ' LOGGED — ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
   },
 
   renderTable() {
     const all = DB.getSessionBatches(this.currentSessionId);
     const batches = [...all].sort((a,b) => new Date(b.timestamp)-new Date(a.timestamp)).slice(0,10);
-
     const total = all.length;
-    document.getElementById('sess-entry-count').textContent =
-      total + ' reading' + (total!==1?'s':'') + (total>10?' (showing 10)':'');
-
+    document.getElementById('sess-entry-count').textContent = total + ' reading' + (total!==1?'s':'') + (total>10?' (showing 10)':'');
     const tbody = document.getElementById('readings-tbody');
     if (!batches.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet — log one below</td></tr>'; // 9 cols: run, time, state, FL, FR, RL, RR, notes, actions
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet — log one below</td></tr>';
       return;
     }
-
-    // Group by runName, preserving order of first appearance (most recent first)
     const grouped = [];
     const seen = {};
     batches.forEach(b => {
@@ -618,10 +748,9 @@ const App = {
       if (!seen[key]) { seen[key] = []; grouped.push({ name: key, rows: seen[key] }); }
       seen[key].push(b);
     });
-
     let html = '';
     grouped.forEach((group, gi) => {
-      if (gi > 0) html += `<tr><td colspan="9" style="padding:0"><div style="height:1px;background:rgba(88,166,255,0.25);margin:0"></div></td></tr>`;
+      if (gi > 0) html += `<tr><td colspan="9" style="padding:0"><div style="height:2px;background:var(--red);opacity:0.3"></div></td></tr>`;
       group.rows.forEach((b, ri) => {
         const time = new Date(b.timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
         const isCold = b.state === 'cold';
@@ -629,14 +758,12 @@ const App = {
         const cls = isCold ? 'cold' : 'hot';
         const cell = w => {
           const v = b[w];
-          return v !== null && v !== undefined ? `<td class="td-psi ${cls}">${v}</td>` : `<td class="td-psi empty">—</td>`;
+          return (v !== null && v !== undefined) ? `<td class="td-psi ${cls}">${v}</td>` : `<td class="td-psi empty">—</td>`;
         };
-        // Only show run name on first row of group
         const runCell = ri === 0
-          ? `<td class="td-run" rowspan="${group.rows.length}" style="color:var(--blue);font-weight:600;font-size:12px;min-width:64px;vertical-align:middle">${esc(group.name)}</td>`
+          ? `<td class="td-run" rowspan="${group.rows.length}">${esc(group.name)}</td>`
           : '';
-        html += `<tr class="row-${cls}">
-          ${runCell}
+        html += `<tr class="row-${cls}">${runCell}
           <td class="td-time">${time}</td>
           <td class="td-state">${stateIcon}</td>
           ${cell('FL')}${cell('FR')}${cell('RL')}${cell('RR')}
@@ -653,13 +780,8 @@ const App = {
 
   deleteBatch(id) {
     if (!confirm('Delete this reading?')) return;
-    DB.deleteBatch(id);
-    this.renderTable();
-    this.toast('🗑️ Reading deleted');
+    DB.deleteBatch(id); this.renderTable(); this.toast('READING DELETED');
   },
-
-  _editId: null,
-  _editHC: 'cold',
 
   openEdit(id) {
     const b = DB.getBatches().find(b => b.id === id);
@@ -667,17 +789,12 @@ const App = {
     this._editId = id;
     document.getElementById('edit-run-name').value = b.runName || '';
     document.getElementById('edit-notes').value = b.note || '';
-    ['FL','FR','RL','RR'].forEach(w => {
-      document.getElementById('edit-'+w).value = (b[w] !== null && b[w] !== undefined) ? b[w] : '';
-    });
+    ['FL','FR','RL','RR'].forEach(w => { document.getElementById('edit-'+w).value = (b[w] !== null && b[w] !== undefined) ? b[w] : ''; });
     this.setEditHC(b.state || 'cold');
     document.getElementById('edit-modal').classList.add('open');
   },
 
-  closeEdit() {
-    this._editId = null;
-    document.getElementById('edit-modal').classList.remove('open');
-  },
+  closeEdit() { this._editId = null; document.getElementById('edit-modal').classList.remove('open'); },
 
   setEditHC(state) {
     this._editHC = state;
@@ -694,72 +811,49 @@ const App = {
     b.runName = document.getElementById('edit-run-name').value.trim() || b.runName || 'Run 1';
     b.state = this._editHC;
     b.note = document.getElementById('edit-notes').value.trim();
-    ['FL','FR','RL','RR'].forEach(w => {
-      const v = document.getElementById('edit-'+w).value;
-      b[w] = v !== '' ? parseFloat(v) : null;
-    });
+    ['FL','FR','RL','RR'].forEach(w => { const v = document.getElementById('edit-'+w).value; b[w] = v !== '' ? parseFloat(v) : null; });
     batches[idx] = b;
     DB.saveBatches(batches);
-    this.closeEdit();
-    this.renderTable();
-    this.toast('✅ Reading updated');
+    this.closeEdit(); this.renderTable(); this.toast('READING UPDATED');
   },
 
   deleteFromEdit() {
     if (!this._editId) return;
     if (!confirm('Delete this reading?')) return;
-    DB.deleteBatch(this._editId);
-    this.closeEdit();
-    this.renderTable();
-    this.toast('🗑️ Reading deleted');
+    DB.deleteBatch(this._editId); this.closeEdit(); this.renderTable(); this.toast('READING DELETED');
   },
 
   deleteSession() {
     if (!confirm('Delete this session and all readings? Cannot be undone.')) return;
-    DB.deleteSession(this.currentSessionId);
-    this.goHome();
-    this.toast('🗑️ Session deleted');
+    DB.deleteSession(this.currentSessionId); this.goHome(); this.toast('SESSION DELETED');
   },
 
   exportCSV() {
     const sessions = DB.getSessions();
     const batches = DB.getBatches();
     if (!batches.length) { alert('No data to export yet.'); return; }
-
     const hdrs = ['Timestamp','Event / Track','Car Notes','Run Name','Ambient Temp (F)','Track Conditions','State','FL PSI','FR PSI','RL PSI','RR PSI','Notes'];
     const rows = [hdrs.join(',')];
     [...batches].sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp)).forEach(b => {
       const s = sessions.find(x => x.id === b.sessionId) || {};
-      rows.push([
-        '"' + new Date(b.timestamp).toLocaleString('en-US') + '"',
-        csvCell(s.event), csvCell(s.notes),
-        csvCell(b.runName), b.ambientTemp||'', csvCell(b.conditions), b.state,
-        b.FL??'', b.FR??'', b.RL??'', b.RR??'',
-        csvCell(b.note)
-      ].join(','));
+      rows.push(['"'+new Date(b.timestamp).toLocaleString('en-US')+'"', csvCell(s.event), csvCell(s.notes), csvCell(b.runName), b.ambientTemp||'', csvCell(b.conditions), b.state, b.FL??'', b.FR??'', b.RL??'', b.RR??'', csvCell(b.note)].join(','));
     });
-
     const blob = new Blob([rows.join('\n')], {type:'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'HPDE-Tire-Log-' + new Date().toISOString().slice(0,10) + '.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-    this.toast('📤 CSV exported!');
+    a.href = url; a.download = 'Porsche-Tire-Log-' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+    URL.revokeObjectURL(url); this.toast('CSV EXPORTED');
   },
 
   toast(msg) {
     const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
+    el.textContent = msg; el.classList.add('show');
     setTimeout(() => el.classList.remove('show'), 2500);
   }
 };
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function csvCell(v) { if (!v) return ''; return '"' + String(v).replace(/"/g,'""') + '"'; }
-
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 App.renderHome();
 </script>
