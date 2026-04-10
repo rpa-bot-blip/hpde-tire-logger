@@ -126,16 +126,16 @@
     tbody tr:last-child { border-bottom: none; }
     tbody tr.row-cold { background: rgba(88,166,255,0.04); }
     tbody tr.row-hot  { background: rgba(213,0,28,0.05); }
-    tbody td { padding: 8px 10px; vertical-align: middle; color: var(--text); white-space: nowrap; }
-    td.td-date-sep { background: #000; color: var(--gold); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 5px 10px; border-bottom: 1px solid var(--border); }
-    td.td-sess { color: var(--gold); font-weight: 800; font-size: 12px; min-width: 55px; vertical-align: middle; }
-    td.td-time { color: var(--text-muted); font-size: 11px; min-width: 60px; }
-    td.td-state { font-size: 14px; text-align: center; min-width: 28px; }
-    td.td-psi { text-align: center; font-weight: 700; font-size: 15px; min-width: 44px; }
+    tbody td { padding: 10px 11px; vertical-align: middle; color: var(--text); white-space: nowrap; }
+    td.td-date-sep { background: #000; color: var(--gold); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 6px 11px; border-bottom: 1px solid var(--border); }
+    td.td-sess { color: var(--gold); font-weight: 800; font-size: 14px; min-width: 55px; vertical-align: middle; }
+    td.td-time { color: var(--text-muted); font-size: 13px; min-width: 68px; }
+    td.td-state { font-size: 16px; text-align: center; min-width: 30px; }
+    td.td-psi { text-align: center; font-weight: 700; font-size: 17px; min-width: 50px; }
     td.td-psi.cold { color: var(--blue); }
     td.td-psi.hot  { color: var(--red); }
-    td.td-psi.empty { color: var(--text-dim); font-weight: 400; font-size: 11px; }
-    td.td-notes { color: var(--text-muted); font-size: 11px; max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
+    td.td-psi.empty { color: var(--text-dim); font-weight: 400; font-size: 13px; }
+    td.td-notes { color: var(--text-muted); font-size: 13px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
     td.td-actions { padding: 2px 5px; white-space: nowrap; }
     .del-btn { background: none; border: none; color: var(--red); font-size: 16px; cursor: pointer; padding: 3px; }
     .edit-btn { background: none; border: none; color: var(--gold); font-size: 13px; cursor: pointer; padding: 3px; }
@@ -332,67 +332,23 @@
           <div style="font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">Date &amp; Session</div>
           <div style="display:flex;align-items:center;gap:10px">
             <input type="date" id="lr-date" style="min-height:36px;font-size:14px;font-weight:700;padding:5px 8px;flex:1" onchange="App.onDateChange()">
-            <div style="text-align:right;white-space:nowrap">
-              <div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Session</div>
-              <div style="font-size:22px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums" id="lr-session-display">1</div>
-            </div>
+            <div style="display:none" id="lr-session-display"></div>
           </div>
         </div>
       </div>
-      <div style="margin-top:8px;font-size:11px;color:var(--text-muted)" id="lr-time-display"></div>
+      <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
+        <div style="font-size:11px;color:var(--text-muted);flex:1" id="lr-time-display"></div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="margin:0;font-size:10px">Session</label>
+          <input type="number" id="lr-session-input" min="1" step="1" style="width:64px;min-height:34px;font-size:16px;font-weight:800;padding:4px 8px;text-align:center;color:var(--gold);border-color:var(--gold)" onchange="App.onSessionChange()">
+        </div>
+      </div>
     </div>
 
     <!-- HC toggle -->
     <div class="hc-toggle">
       <button class="hc-btn cold active" id="lr-hc-cold" onclick="App.setLrHC('cold')">❄️ Cold — Before</button>
       <button class="hc-btn hot" id="lr-hc-hot" onclick="App.setLrHC('hot')">🔥 Hot — After</button>
-    </div>
-
-    <!-- 911 diagram -->
-    <div class="car-diagram-wrap">
-      <svg viewBox="0 0 220 400" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="bG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#1a1a1a"/><stop offset="50%" stop-color="#2a2a2a"/><stop offset="100%" stop-color="#1a1a1a"/>
-          </linearGradient>
-          <linearGradient id="gG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#1a2a3a" stop-opacity="0.9"/><stop offset="100%" stop-color="#0a1a2a" stop-opacity="0.7"/>
-          </linearGradient>
-        </defs>
-        <rect x="58" y="330" width="104" height="18" rx="4" fill="#111"/>
-        <rect x="60" y="332" width="26" height="8" rx="2" fill="#C5A028" opacity="0.7"/>
-        <rect x="134" y="332" width="26" height="8" rx="2" fill="#C5A028" opacity="0.7"/>
-        <path d="M68,52 L152,52 C162,52 172,62 174,75 L180,140 C183,160 183,180 180,200 L178,270 C176,300 168,330 152,348 L68,348 C52,330 44,300 42,270 L40,200 C37,180 37,160 40,140 L46,75 C48,62 58,52 68,52 Z" fill="url(#bG)" stroke="#333" stroke-width="1"/>
-        <path d="M82,95 L138,95 C148,95 155,100 157,110 L162,170 C163,185 155,195 145,195 L75,195 C65,195 57,185 58,170 L63,110 C65,100 72,95 82,95 Z" fill="url(#gG)" stroke="#444" stroke-width="0.5"/>
-        <path d="M84,95 L136,95 L148,115 L72,115 Z" fill="#1a3050" opacity="0.8" stroke="#555" stroke-width="0.5"/>
-        <path d="M76,175 L144,175 L150,195 L70,195 Z" fill="#0a1520" opacity="0.7" stroke="#333" stroke-width="0.5"/>
-        <line x1="43" y1="195" x2="177" y2="195" stroke="#444" stroke-width="0.7"/>
-        <rect x="75" y="52" width="70" height="38" rx="4" fill="#222" stroke="#333" stroke-width="0.5"/>
-        <line x1="90" y1="58" x2="130" y2="58" stroke="#444" stroke-width="0.5"/>
-        <line x1="90" y1="84" x2="130" y2="84" stroke="#444" stroke-width="0.5"/>
-        <circle cx="110" cy="71" r="3" fill="#333" stroke="#444" stroke-width="0.5"/>
-        <rect x="70" y="300" width="80" height="40" rx="4" fill="#1e1e1e" stroke="#333" stroke-width="0.5"/>
-        <line x1="78" y1="308" x2="142" y2="308" stroke="#333" stroke-width="1"/>
-        <line x1="78" y1="316" x2="142" y2="316" stroke="#333" stroke-width="1"/>
-        <line x1="78" y1="324" x2="142" y2="324" stroke="#333" stroke-width="1"/>
-        <path d="M78,34 L142,34 C155,34 165,42 166,52 L54,52 C55,42 65,34 78,34 Z" fill="#111" stroke="#333" stroke-width="0.5"/>
-        <ellipse cx="82" cy="44" rx="12" ry="5" fill="#D5001C" opacity="0.5"/>
-        <ellipse cx="138" cy="44" rx="12" ry="5" fill="#D5001C" opacity="0.5"/>
-        <rect x="72" y="34" width="76" height="4" rx="1" fill="#111"/>
-        <rect x="50" y="340" width="120" height="6" rx="3" fill="#222" stroke="#D5001C" stroke-width="1"/>
-        <ellipse cx="38" cy="102" rx="7" ry="4" fill="#1a1a1a" stroke="#333" stroke-width="0.5" transform="rotate(-10,38,102)"/>
-        <ellipse cx="182" cy="102" rx="7" ry="4" fill="#1a1a1a" stroke="#333" stroke-width="0.5" transform="rotate(10,182,102)"/>
-        <circle cx="36" cy="78" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
-        <text x="36" y="82" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff">FL</text>
-        <circle cx="184" cy="78" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
-        <text x="184" y="82" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff">FR</text>
-        <circle cx="36" cy="295" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
-        <text x="36" y="299" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff">RL</text>
-        <circle cx="184" cy="295" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
-        <text x="184" y="299" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff">RR</text>
-        <circle cx="110" cy="145" r="10" fill="none" stroke="#C5A028" stroke-width="1" opacity="0.4"/>
-        <text x="110" y="149" text-anchor="middle" font-size="9" fill="#C5A028" opacity="0.5">P</text>
-      </svg>
     </div>
 
     <!-- PSI Inputs -->
@@ -709,8 +665,8 @@ const App = {
     this.lrHCState = hcState;
 
     document.getElementById('lr-date').value = today;
-    document.getElementById('lr-session-display').textContent = sessionNum;
-    document.getElementById('lr-time-display').textContent = '🕐 ' + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', second:'2-digit'});
+    document.getElementById('lr-session-input').value = sessionNum;
+    document.getElementById('lr-time-display').textContent = '🕐 ' + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
     document.getElementById('lr-hc-cold').classList.toggle('active', hcState === 'cold');
     document.getElementById('lr-hc-hot').classList.toggle('active', hcState === 'hot');
 
@@ -728,10 +684,15 @@ const App = {
     const { sessionNum, hcState } = this.calcNextSession(this.currentWeekendId, this.lrDate);
     this.lrSessionNum = sessionNum;
     this.lrHCState = hcState;
-    document.getElementById('lr-session-display').textContent = sessionNum;
+    document.getElementById('lr-session-input').value = sessionNum;
     document.getElementById('lr-hc-cold').classList.toggle('active', hcState === 'cold');
     document.getElementById('lr-hc-hot').classList.toggle('active', hcState === 'hot');
     this.updateLrCells();
+  },
+
+  onSessionChange() {
+    const v = parseInt(document.getElementById('lr-session-input').value);
+    if (!isNaN(v) && v >= 1) this.lrSessionNum = v;
   },
 
   setLrHC(state) {
@@ -755,6 +716,8 @@ const App = {
   logReading() {
     if (!this.currentWeekendId) return;
     const date = document.getElementById('lr-date').value || todayStr();
+    const sessionInput = parseInt(document.getElementById('lr-session-input').value);
+    if (!isNaN(sessionInput) && sessionInput >= 1) this.lrSessionNum = sessionInput;
     const r = {
       id: 'r_' + Date.now(),
       weekendId: this.currentWeekendId,
