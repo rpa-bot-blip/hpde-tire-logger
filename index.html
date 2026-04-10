@@ -231,54 +231,18 @@
 <div id="view-new-session" class="view">
   <div class="header">
     <button class="back-btn" onclick="App.goHome()">‹ Back</button>
-    <h1>New Session</h1>
+    <h1>New Track Day</h1>
   </div>
   <div class="content">
     <div class="form-group">
-      <label>Event Name</label>
+      <label>Event / Track Name</label>
       <input type="text" id="ns-event" placeholder="e.g. NCM Motorsports Apr 2026">
-    </div>
-    <div class="form-group">
-      <label>Track Name</label>
-      <input type="text" id="ns-track" placeholder="e.g. NCM Motorsports Park">
-    </div>
-    <div class="row">
-      <div class="form-group">
-        <label>Session Type</label>
-        <select id="ns-type">
-          <option>Practice</option>
-          <option>Hot Lap</option>
-          <option>Qualifying</option>
-          <option>Race</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Session #</label>
-        <input type="number" id="ns-num" value="1" min="1">
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group">
-        <label>Ambient Temp (°F)</label>
-        <input type="number" id="ns-temp" placeholder="72">
-      </div>
-      <div class="form-group">
-        <label>Track Conditions</label>
-        <select id="ns-conditions">
-          <option>Dry</option>
-          <option>Damp</option>
-          <option>Wet</option>
-          <option>Mixed</option>
-          <option>Unknown</option>
-        </select>
-      </div>
     </div>
     <div class="form-group">
       <label>Car / Setup Notes (optional)</label>
       <textarea id="ns-notes" placeholder="e.g. stock suspension, cold start"></textarea>
     </div>
-    <button class="btn btn-primary" onclick="App.createSession()">Start Session →</button>
+    <button class="btn btn-primary" onclick="App.createSession()">Start →</button>
     <div class="bottom-pad"></div>
   </div>
 </div>
@@ -288,7 +252,7 @@
   <div class="header">
     <button class="back-btn" onclick="App.goHome()">‹ Back</button>
     <div style="flex:1">
-      <h1 id="sess-title">Session</h1>
+      <h1 id="sess-title">Track Day</h1>
       <div class="subtitle" id="sess-subtitle"></div>
     </div>
   </div>
@@ -325,7 +289,24 @@
 
     <!-- Log Form -->
     <div class="log-form-card">
-      <div class="log-form-title">📝 Log Reading</div>
+      <div class="log-form-title">📝 Session Data</div>
+      <!-- Ambient temp + conditions inline -->
+      <div class="row" style="margin-bottom:12px">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Ambient Temp (°F)</label>
+          <input type="number" id="sess-temp" placeholder="72">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Track Conditions</label>
+          <select id="sess-conditions">
+            <option>Dry</option>
+            <option>Damp</option>
+            <option>Wet</option>
+            <option>Mixed</option>
+            <option>Unknown</option>
+          </select>
+        </div>
+      </div>
 
       <!-- Run Name -->
       <div class="form-group" style="margin-bottom:12px">
@@ -514,12 +495,10 @@ const App = {
     el.innerHTML = sessions.map(s => {
       const count = batches.filter(b => b.sessionId === s.id).length;
       const date = new Date(s.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
-      const cond = s.conditions ? ' · ' + s.conditions : '';
-      const temp = s.ambientTemp ? ' · ' + s.ambientTemp + '°F' : '';
       return `<div class="session-item" onclick="App.openSession('${s.id}')">
         <div class="si-main">
           <div class="si-title">${esc(s.event || s.track || 'Session')}</div>
-          <div class="si-sub">${esc(s.track)} · ${s.type} #${s.num} · ${date}${temp}${cond}</div>
+          <div class="si-sub">${date}${s.notes ? ' · ' + esc(s.notes.slice(0,40)) : ''}</div>
         </div>
         <span class="si-badge">${count} reading${count!==1?'s':''}</span>
         <span class="chevron">›</span>
@@ -528,25 +507,17 @@ const App = {
   },
 
   newSession() {
-    ['ns-event','ns-track','ns-notes'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('ns-type').value = 'Practice';
-    document.getElementById('ns-num').value = '1';
-    document.getElementById('ns-temp').value = '';
-    document.getElementById('ns-conditions').value = 'Dry';
+    ['ns-event','ns-notes'].forEach(id => document.getElementById(id).value = '');
     this.showView('view-new-session');
   },
 
   createSession() {
     const event = document.getElementById('ns-event').value.trim();
-    const track = document.getElementById('ns-track').value.trim();
-    if (!event && !track) { alert('Enter an event name or track name.'); return; }
+    if (!event) { alert('Enter an event / track name.'); return; }
     const s = {
       id: 'sess_' + Date.now(),
-      event, track,
-      type: document.getElementById('ns-type').value,
-      num: parseInt(document.getElementById('ns-num').value) || 1,
-      ambientTemp: parseFloat(document.getElementById('ns-temp').value) || null,
-      conditions: document.getElementById('ns-conditions').value,
+      event,
+      track: event, // keep track field for backward compat
       notes: document.getElementById('ns-notes').value.trim(),
       createdAt: new Date().toISOString()
     };
@@ -559,18 +530,21 @@ const App = {
     const s = DB.getSessions().find(s => s.id === id);
     if (!s) { this.goHome(); return; }
 
-    document.getElementById('sess-title').textContent = s.event || s.track || 'Session';
-    document.getElementById('sess-subtitle').textContent = (s.track ? s.track + ' · ' : '') + s.type + ' #' + s.num;
+    document.getElementById('sess-title').textContent = 'Track Day';
+    document.getElementById('sess-subtitle').textContent = s.event || s.track || '';
 
-    // Info bar
+    // Info bar — show notes if any
     const bar = document.getElementById('sess-info-bar');
     const items = [];
-    if (s.ambientTemp) items.push({ label: 'Ambient', val: s.ambientTemp + '°F' });
-    if (s.conditions)  items.push({ label: 'Track', val: s.conditions });
-    if (s.notes)       items.push({ label: 'Notes', val: s.notes });
+    if (s.notes) items.push({ label: 'Car / Setup', val: s.notes });
     bar.innerHTML = items.length
       ? items.map(i => `<div class="sib-item"><div class="sib-label">${i.label}</div><div class="sib-val">${esc(i.val)}</div></div>`).join('')
-      : '<div style="font-size:12px;color:var(--text-dim)">No session details</div>';
+      : '';
+    if (!items.length) bar.style.display = 'none'; else bar.style.display = '';
+
+    // Restore ambient temp / conditions fields to blank
+    document.getElementById('sess-temp').value = '';
+    document.getElementById('sess-conditions').value = 'Dry';
 
     this.resetForm();
     this.renderTable();
@@ -598,6 +572,8 @@ const App = {
       timestamp: new Date().toISOString(),
       state: this.hcState,
       runName: document.getElementById('run-name').value.trim() || 'Run 1',
+      ambientTemp: parseFloat(document.getElementById('sess-temp').value) || null,
+      conditions: document.getElementById('sess-conditions').value,
       note: document.getElementById('reading-notes').value.trim()
     };
     let hasAny = false;
@@ -750,14 +726,14 @@ const App = {
     const batches = DB.getBatches();
     if (!batches.length) { alert('No data to export yet.'); return; }
 
-    const hdrs = ['Timestamp','Event','Track','Session Type','Session #','Ambient Temp (F)','Track Conditions','Run Name','State','FL PSI','FR PSI','RL PSI','RR PSI','Notes'];
+    const hdrs = ['Timestamp','Event / Track','Car Notes','Run Name','Ambient Temp (F)','Track Conditions','State','FL PSI','FR PSI','RL PSI','RR PSI','Notes'];
     const rows = [hdrs.join(',')];
     [...batches].sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp)).forEach(b => {
       const s = sessions.find(x => x.id === b.sessionId) || {};
       rows.push([
         '"' + new Date(b.timestamp).toLocaleString('en-US') + '"',
-        csvCell(s.event), csvCell(s.track), csvCell(s.type), s.num||'',
-        s.ambientTemp||'', csvCell(s.conditions), csvCell(b.runName), b.state,
+        csvCell(s.event), csvCell(s.notes),
+        csvCell(b.runName), b.ambientTemp||'', csvCell(b.conditions), b.state,
         b.FL??'', b.FR??'', b.RL??'', b.RR??'',
         csvCell(b.note)
       ].join(','));
