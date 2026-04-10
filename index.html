@@ -288,8 +288,9 @@
       <table>
         <thead>
           <tr>
+            <th>Run</th>
             <th>Time</th>
-            <th></th><!-- state icon -->
+            <th></th>
             <th>FL</th>
             <th>FR</th>
             <th>RL</th>
@@ -308,10 +309,16 @@
     <div class="log-form-card">
       <div class="log-form-title">📝 Log Reading</div>
 
+      <!-- Run Name -->
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Run Name</label>
+        <input type="text" id="run-name" placeholder="e.g. Run 1, Morning, Session 2">
+      </div>
+
       <!-- Hot / Cold record-level toggle -->
       <div class="hc-record-toggle">
-        <button class="hc-record-btn cold active" id="hc-cold" onclick="App.setHC('cold')">❄️ Cold — Before Session</button>
-        <button class="hc-record-btn hot" id="hc-hot" onclick="App.setHC('hot')">🔥 Hot — After Session</button>
+        <button class="hc-record-btn cold active" id="hc-cold" onclick="App.setHC('cold')">❄️ Cold — Before</button>
+        <button class="hc-record-btn hot" id="hc-hot" onclick="App.setHC('hot')">🔥 Hot — After</button>
       </div>
 
       <!-- 2x2 PSI inputs -->
@@ -506,6 +513,7 @@ const App = {
   resetForm() {
     ['FL','FR','RL','RR'].forEach(w => document.getElementById('psi-'+w).value = '');
     document.getElementById('reading-notes').value = '';
+    // Keep run name so next reading (hot) auto-fills the same run
     this.setHC('cold');
   },
 
@@ -522,6 +530,7 @@ const App = {
       sessionId: this.currentSessionId,
       timestamp: new Date().toISOString(),
       state: this.hcState,
+      runName: document.getElementById('run-name').value.trim() || 'Run 1',
       note: document.getElementById('reading-notes').value.trim()
     };
     let hasAny = false;
@@ -532,11 +541,16 @@ const App = {
       if (batch[w] !== null) hasAny = true;
     });
     if (!hasAny) { alert('Enter at least one tire pressure.'); return; }
+    const wasState = this.hcState;
+    const runName = document.getElementById('run-name').value.trim() || 'Run 1';
     DB.addBatch(batch);
     this.resetForm();
+    // Keep run name, flip to hot if we just logged cold
+    document.getElementById('run-name').value = runName;
+    if (wasState === 'cold') this.setHC('hot');
     this.renderTable();
-    const stateLabel = this.hcState === 'cold' ? '❄️ Cold' : '🔥 Hot';
-    this.toast('✅ ' + stateLabel + ' reading logged — ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
+    const stateLabel = wasState === 'cold' ? '❄️ Cold' : '🔥 Hot';
+    this.toast('✅ ' + stateLabel + ' logged — ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
   },
 
   renderTable() {
@@ -549,31 +563,46 @@ const App = {
 
     const tbody = document.getElementById('readings-tbody');
     if (!batches.length) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet — log one below</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet — log one below</td></tr>';
       return;
     }
 
-    tbody.innerHTML = batches.map(b => {
-      const time = new Date(b.timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-      const isCold = b.state === 'cold';
-      const stateIcon = isCold ? '❄️' : '🔥';
-      const cls = isCold ? 'cold' : 'hot';
+    // Group by runName, preserving order of first appearance (most recent first)
+    const grouped = [];
+    const seen = {};
+    batches.forEach(b => {
+      const key = b.runName || 'Run 1';
+      if (!seen[key]) { seen[key] = []; grouped.push({ name: key, rows: seen[key] }); }
+      seen[key].push(b);
+    });
 
-      const cell = w => {
-        const v = b[w];
-        return v !== null && v !== undefined
-          ? `<td class="td-psi ${cls}">${v}</td>`
-          : `<td class="td-psi empty">—</td>`;
-      };
-
-      return `<tr class="row-${cls}">
-        <td class="td-time">${time}</td>
-        <td class="td-state">${stateIcon}</td>
-        ${cell('FL')}${cell('FR')}${cell('RL')}${cell('RR')}
-        <td class="td-notes">${esc(b.note||'')}</td>
-        <td class="td-del"><button class="del-btn" onclick="App.deleteBatch('${b.id}')">×</button></td>
-      </tr>`;
-    }).join('');
+    let html = '';
+    grouped.forEach((group, gi) => {
+      if (gi > 0) html += `<tr><td colspan="9" style="padding:0"><div style="height:1px;background:rgba(88,166,255,0.25);margin:0"></div></td></tr>`;
+      group.rows.forEach((b, ri) => {
+        const time = new Date(b.timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+        const isCold = b.state === 'cold';
+        const stateIcon = isCold ? '❄️' : '🔥';
+        const cls = isCold ? 'cold' : 'hot';
+        const cell = w => {
+          const v = b[w];
+          return v !== null && v !== undefined ? `<td class="td-psi ${cls}">${v}</td>` : `<td class="td-psi empty">—</td>`;
+        };
+        // Only show run name on first row of group
+        const runCell = ri === 0
+          ? `<td class="td-run" rowspan="${group.rows.length}" style="color:var(--blue);font-weight:600;font-size:12px;min-width:64px;vertical-align:middle">${esc(group.name)}</td>`
+          : '';
+        html += `<tr class="row-${cls}">
+          ${runCell}
+          <td class="td-time">${time}</td>
+          <td class="td-state">${stateIcon}</td>
+          ${cell('FL')}${cell('FR')}${cell('RL')}${cell('RR')}
+          <td class="td-notes">${esc(b.note||'')}</td>
+          <td class="td-del"><button class="del-btn" onclick="App.deleteBatch('${b.id}')">×</button></td>
+        </tr>`;
+      });
+    });
+    tbody.innerHTML = html;
   },
 
   deleteBatch(id) {
@@ -595,14 +624,14 @@ const App = {
     const batches = DB.getBatches();
     if (!batches.length) { alert('No data to export yet.'); return; }
 
-    const hdrs = ['Timestamp','Event','Track','Session Type','Session #','Ambient Temp (F)','Track Conditions','State','FL PSI','FR PSI','RL PSI','RR PSI','Notes'];
+    const hdrs = ['Timestamp','Event','Track','Session Type','Session #','Ambient Temp (F)','Track Conditions','Run Name','State','FL PSI','FR PSI','RL PSI','RR PSI','Notes'];
     const rows = [hdrs.join(',')];
     [...batches].sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp)).forEach(b => {
       const s = sessions.find(x => x.id === b.sessionId) || {};
       rows.push([
         '"' + new Date(b.timestamp).toLocaleString('en-US') + '"',
         csvCell(s.event), csvCell(s.track), csvCell(s.type), s.num||'',
-        s.ambientTemp||'', csvCell(s.conditions), b.state,
+        s.ambientTemp||'', csvCell(s.conditions), csvCell(b.runName), b.state,
         b.FL??'', b.FR??'', b.RL??'', b.RR??'',
         csvCell(b.note)
       ].join(','));
