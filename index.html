@@ -26,7 +26,7 @@
     .view { display: none; flex-direction: column; min-height: 100vh; }
     .view.active { display: flex; }
 
-    /* ===== PORSCHE HEADER ===== */
+    /* PORSCHE HEADER */
     .porsche-header { background: #000; border-bottom: 3px solid var(--red); }
     .porsche-banner {
       background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #0a0a0a 100%);
@@ -42,162 +42,151 @@
     .porsche-subtitle { font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-top: 4px; opacity: 0.8; }
     .racing-stripe { height: 4px; background: repeating-linear-gradient(90deg, var(--red) 0px, var(--red) 60px, transparent 60px, transparent 80px, var(--gold) 80px, var(--gold) 84px, transparent 84px, transparent 100px); }
 
-    .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
+    .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 14px; }
 
-    /* ===== BUTTONS ===== */
+    /* BUTTONS */
     .btn {
       display: flex; align-items: center; justify-content: center;
-      gap: 8px; padding: 14px 20px; border-radius: 4px; border: none;
-      font-size: 14px; font-weight: 800; cursor: pointer; min-height: 50px;
-      transition: opacity 0.15s; width: 100%; text-transform: uppercase; letter-spacing: 1px;
+      gap: 8px; padding: 13px 18px; border-radius: 4px; border: none;
+      font-size: 13px; font-weight: 800; cursor: pointer; min-height: 48px;
+      transition: opacity 0.15s; width: 100%; text-transform: uppercase; letter-spacing: 0.8px;
     }
     .btn:active { opacity: 0.7; }
     .btn-primary { background: var(--red); color: #fff; }
     .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); text-transform: none; letter-spacing: 0; font-weight: 600; }
     .btn-gold { background: var(--gold); color: #000; }
-    .btn-sm { font-size: 12px; padding: 8px 14px; min-height: 38px; width: auto; border-radius: 4px; }
-    .btn-icon { background: none; border: 1px solid var(--border); color: var(--text-muted); width: 38px; height: 38px; min-height: 38px; padding: 0; border-radius: 4px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .btn-sm { font-size: 12px; padding: 8px 14px; min-height: 36px; width: auto; border-radius: 4px; }
+    .btn-icon { background: none; border: 1px solid var(--border); color: var(--text-muted); width: 36px; height: 36px; min-height: 36px; padding: 0; border-radius: 4px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    /* ===== FORM ===== */
+    /* FORM */
     .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    label { display: block; font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     input, textarea, select {
       width: 100%; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 4px; padding: 11px 13px; font-size: 16px; color: var(--text);
-      appearance: none; -webkit-appearance: none; outline: none; min-height: 46px; font-family: inherit;
+      border-radius: 4px; padding: 10px 12px; font-size: 16px; color: var(--text);
+      appearance: none; -webkit-appearance: none; outline: none; min-height: 44px; font-family: inherit;
     }
     input:focus, textarea:focus, select:focus { border-color: var(--red); }
-    textarea { resize: none; min-height: 60px; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
+    textarea { resize: none; min-height: 58px; }
     .row { display: flex; gap: 10px; }
     .row .form-group { flex: 1; margin-bottom: 0; }
 
-    /* ===== SESSION INFO BAR ===== */
-    .session-info-bar {
+    /* INFO BOXES */
+    .info-bar {
       background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--gold);
-      border-radius: 4px; padding: 10px 14px; margin-bottom: 12px;
+      border-radius: 4px; padding: 10px 12px; margin-bottom: 12px;
     }
-    .sib-item .sib-label { color: var(--text-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
-    .sib-item .sib-val { color: var(--text-muted); font-size: 12px; font-weight: 500; margin-top: 1px; }
-    .session-info-bar .sib-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .info-bar .ib-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .ib-item .ib-label { color: var(--text-dim); font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .ib-item .ib-val { color: var(--text); font-size: 13px; font-weight: 700; margin-top: 1px; }
 
-    /* ===== SECTION HEADERS ===== */
-    .section-header {
-      font-size: 10px; font-weight: 800; color: var(--gold); text-transform: uppercase;
-      letter-spacing: 1px; margin: 16px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 5px;
+    /* SESSION CONTEXT PILL */
+    .session-context {
+      background: #000; border: 1px solid var(--border); border-top: 3px solid var(--gold);
+      border-radius: 6px; padding: 12px 14px; margin-bottom: 14px;
     }
-    .section-header:first-of-type { margin-top: 0; }
+    .sc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+    .sc-name { font-size: 15px; font-weight: 800; color: #fff; }
+    .sc-session { font-size: 20px; font-weight: 900; color: var(--gold); font-variant-numeric: tabular-nums; }
+    .sc-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .sc-chip {
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      padding: 3px 10px; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;
+    }
+    .sc-chip strong { color: var(--text); font-weight: 700; }
 
-    /* ===== SESSION LIST ===== */
-    .session-item {
+    /* SECTION HEADERS */
+    .section-header { font-size: 10px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin: 14px 0 7px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+
+    /* WEEKEND / SESSION LIST */
+    .list-item {
       background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--red);
-      border-radius: 4px; padding: 12px 13px; margin-bottom: 7px; cursor: pointer;
+      border-radius: 4px; padding: 11px 12px; margin-bottom: 7px; cursor: pointer;
       display: flex; align-items: center; gap: 10px;
     }
-    .session-item.selected { border-left-color: var(--gold); background: #1a1a2a; }
-    .session-item .si-main { flex: 1; min-width: 0; }
-    .session-item .si-title { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .session-item .si-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .session-item .si-badge { background: var(--border); color: var(--text-muted); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
-    .session-item .chevron { color: var(--gold); font-size: 15px; font-weight: 700; }
-    .empty-state { text-align: center; padding: 22px 20px; color: var(--text-dim); font-size: 13px; }
+    .list-item.selected { border-left-color: var(--gold); background: #141420; }
+    .list-item .li-main { flex: 1; min-width: 0; }
+    .list-item .li-title { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-item .li-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .list-item .li-badge { background: var(--border); color: var(--text-muted); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+    .list-item .chevron { color: var(--gold); font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .empty-state { text-align: center; padding: 22px 16px; color: var(--text-dim); font-size: 13px; line-height: 1.5; }
     .empty-state .es-icon { font-size: 28px; margin-bottom: 6px; }
 
-    /* ===== READINGS TABLE ===== */
-    .table-wrap {
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
-      border: 1px solid var(--border); border-radius: 4px;
-      margin-bottom: 12px;
-    }
+    /* READINGS TABLE */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 12px; }
     table { border-collapse: collapse; min-width: 100%; }
     thead th {
-      background: #000; color: var(--gold); font-size: 10px;
-      font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px;
-      padding: 8px 10px; border-bottom: 2px solid var(--red);
-      white-space: nowrap; position: sticky; top: 0; z-index: 2;
+      background: #000; color: var(--gold); font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.6px; padding: 8px 10px;
+      border-bottom: 2px solid var(--red); white-space: nowrap; position: sticky; top: 0; z-index: 2;
     }
     tbody tr { border-bottom: 1px solid var(--border); }
     tbody tr:last-child { border-bottom: none; }
     tbody tr.row-cold { background: rgba(88,166,255,0.04); }
     tbody tr.row-hot  { background: rgba(213,0,28,0.05); }
-    tbody td { padding: 9px 10px; vertical-align: middle; color: var(--text); }
-    td.td-time { color: var(--text-muted); font-size: 11px; min-width: 80px; }
-    td.td-state { font-size: 14px; text-align: center; min-width: 30px; }
-    td.td-psi { text-align: center; font-weight: 700; font-size: 15px; min-width: 46px; }
+    tbody td { padding: 8px 10px; vertical-align: middle; color: var(--text); white-space: nowrap; }
+    td.td-date-sep { background: #000; color: var(--gold); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 5px 10px; border-bottom: 1px solid var(--border); }
+    td.td-sess { color: var(--gold); font-weight: 800; font-size: 12px; min-width: 55px; vertical-align: middle; }
+    td.td-time { color: var(--text-muted); font-size: 11px; min-width: 60px; }
+    td.td-state { font-size: 14px; text-align: center; min-width: 28px; }
+    td.td-psi { text-align: center; font-weight: 700; font-size: 15px; min-width: 44px; }
     td.td-psi.cold { color: var(--blue); }
     td.td-psi.hot  { color: var(--red); }
     td.td-psi.empty { color: var(--text-dim); font-weight: 400; font-size: 11px; }
-    td.td-run { color: var(--gold); font-weight: 700; font-size: 11px; min-width: 60px; vertical-align: middle; }
-    td.td-notes { color: var(--text-muted); font-size: 11px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
-    td.td-actions { padding: 3px 6px; white-space: nowrap; }
-    .del-btn { background: none; border: none; color: var(--red); font-size: 16px; cursor: pointer; padding: 3px 4px; }
-    .edit-btn { background: none; border: none; color: var(--gold); font-size: 13px; cursor: pointer; padding: 3px 4px; }
+    td.td-notes { color: var(--text-muted); font-size: 11px; max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
+    td.td-actions { padding: 2px 5px; white-space: nowrap; }
+    .del-btn { background: none; border: none; color: var(--red); font-size: 16px; cursor: pointer; padding: 3px; }
+    .edit-btn { background: none; border: none; color: var(--gold); font-size: 13px; cursor: pointer; padding: 3px; }
 
-    /* ===== 911 TOP VIEW ===== */
+    /* 911 SVG */
     .car-diagram-wrap {
       display: flex; justify-content: center; align-items: center;
-      margin-bottom: 14px;
-      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-      padding: 10px 0 6px;
+      margin-bottom: 12px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 0 4px;
     }
-    .car-diagram-wrap svg { max-width: 260px; width: 100%; }
+    .car-diagram-wrap svg { max-width: 240px; width: 100%; }
 
-    /* Tire input grid */
+    /* Tire inputs */
     .tire-inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .tire-input-cell {
       background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-      padding: 8px 8px 6px; border-top: 3px solid var(--border); transition: border-top-color 0.15s;
+      padding: 8px 7px 5px; border-top: 3px solid var(--border); transition: border-top-color 0.15s;
     }
     .tire-input-cell.cold-active { border-top-color: var(--blue); }
     .tire-input-cell.hot-active  { border-top-color: var(--red); }
-    .itc-label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .itc-label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
     .tire-input-cell input {
-      padding: 6px 4px; font-size: 22px; font-weight: 800; min-height: 46px;
+      padding: 5px 2px; font-size: 22px; font-weight: 800; min-height: 44px;
       text-align: center; width: 100%; background: var(--bg); border: 1px solid var(--border);
       border-radius: 4px; color: var(--text); appearance: none; -webkit-appearance: none; outline: none;
     }
     .tire-input-cell input:focus { border-color: var(--red); }
     .psi-label { text-align: center; font-size: 9px; color: var(--text-dim); margin-top: 2px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
 
-    /* Hot/Cold toggle */
-    .hc-record-toggle {
-      display: flex; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 4px; overflow: hidden; margin-bottom: 12px;
-    }
-    .hc-record-btn {
-      flex: 1; padding: 11px; border: none; background: transparent;
-      font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.15s;
-      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .hc-record-btn.cold.active { background: var(--blue); color: #fff; }
-    .hc-record-btn.hot.active  { background: var(--red); color: #fff; }
+    /* HC toggle */
+    .hc-toggle { display: flex; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+    .hc-btn { flex: 1; padding: 11px; border: none; background: transparent; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.15s; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .hc-btn.cold.active { background: var(--blue); color: #fff; }
+    .hc-btn.hot.active  { background: var(--red); color: #fff; }
 
-    /* ===== MODALS ===== */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.82); z-index: 50;
-      align-items: flex-end; justify-content: center;
-    }
+    /* MODALS */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 50; align-items: flex-end; justify-content: center; }
     .modal-overlay.open { display: flex; }
     .modal {
       background: var(--card); border: 1px solid var(--border); border-top: 3px solid var(--red);
-      border-radius: 12px 12px 0 0; padding: 18px 16px;
-      width: 100%; max-width: 600px;
-      max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      border-radius: 12px 12px 0 0; padding: 16px 15px;
+      width: 100%; max-width: 600px; max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
-    .modal-title {
-      font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 14px;
-      display: flex; justify-content: space-between; align-items: center;
-      text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 0 4px; line-height: 1; }
+    .modal-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 0.5px; }
+    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 0 3px; line-height: 1; }
 
     /* TOAST */
     .toast {
-      position: fixed; bottom: 36px; left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--red); color: #fff;
-      padding: 10px 20px; border-radius: 4px; font-size: 12px; font-weight: 800;
-      opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 100;
+      position: fixed; bottom: 34px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--red); color: #fff; padding: 10px 20px; border-radius: 4px;
+      font-size: 12px; font-weight: 800; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 100;
       white-space: nowrap; text-transform: uppercase; letter-spacing: 0.5px;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -205,12 +194,14 @@
     .divider { height: 1px; background: var(--border); margin: 12px 0; }
     .bottom-pad { height: env(safe-area-inset-bottom, 20px); }
     .flex-between { display: flex; align-items: center; justify-content: space-between; }
+    .section-label { font-size: 10px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 0.6px; }
   </style>
 </head>
 <body>
 
-<!-- ==================== HOME (single page) ==================== -->
 <div id="view-home" class="view active">
+
+  <!-- Porsche Header -->
   <div class="porsche-header">
     <div class="porsche-banner">
       <div class="porsche-wordmark">Porsche Motorsport</div>
@@ -221,40 +212,43 @@
   </div>
 
   <div class="content">
-    <!-- Action buttons row -->
-    <div style="display:flex;gap:8px;margin-bottom:12px">
-      <button class="btn btn-primary" style="flex:1" onclick="App.openAddSession()">+ New Track Day</button>
-      <button class="btn btn-gold" id="btn-log-reading" onclick="App.openLogReading()" style="flex:1;display:none">Log Reading</button>
-    </div>
-    <button class="btn btn-secondary btn-sm" onclick="App.exportCSV()" style="width:100%;margin-bottom:16px">Export CSV</button>
 
-    <!-- Active session info bar (shown when a session is selected) -->
-    <div id="active-session-bar" class="session-info-bar" style="display:none">
-      <div class="sib-row">
-        <div class="sib-item">
-          <div class="sib-label">Session</div>
-          <div class="sib-val" id="asb-name">—</div>
+    <!-- Action buttons -->
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="App.openNewWeekend()">+ New Track Weekend</button>
+      <button class="btn btn-gold" id="btn-log" onclick="App.openLogReading()" style="flex:1;display:none">Log Reading</button>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="App.exportCSV()" style="width:100%;margin-bottom:14px">Export CSV</button>
+
+    <!-- Active weekend + current session context -->
+    <div id="session-context" class="session-context" style="display:none">
+      <div class="sc-top">
+        <div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px">Track Weekend</div>
+          <div class="sc-name" id="sc-name">—</div>
         </div>
-        <div class="sib-item" id="asb-notes-item" style="display:none">
-          <div class="sib-label">Car / Setup</div>
-          <div class="sib-val" id="asb-notes">—</div>
+        <div style="text-align:right">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px">Next</div>
+          <div class="sc-session" id="sc-session">Session 1</div>
         </div>
-        <div class="sib-item" style="margin-left:auto">
-          <button class="btn-icon" onclick="App.openEditSession()" title="Edit session">✏️</button>
-        </div>
+      </div>
+      <div class="sc-row">
+        <div class="sc-chip" id="sc-date-chip">📅 <strong id="sc-date">—</strong></div>
+        <div class="sc-chip" id="sc-hc-chip">❄️ <strong id="sc-hc">Cold</strong></div>
+        <div class="sc-chip"><button class="btn-icon" onclick="App.openEditWeekend()" style="border:none;width:auto;height:auto;padding:0;color:var(--text-muted);font-size:13px;background:none;cursor:pointer">✏️ Edit</button></div>
       </div>
     </div>
 
     <!-- Readings Table -->
-    <div class="flex-between" style="margin-bottom:8px">
-      <div class="section-label" style="margin-bottom:0">Readings</div>
+    <div class="flex-between" style="margin-bottom:7px">
+      <div class="section-label">Readings</div>
       <span id="reading-count" style="font-size:10px;color:var(--text-muted)"></span>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Run</th>
+            <th>Session</th>
             <th>Time</th>
             <th></th>
             <th>FL</th>
@@ -266,149 +260,128 @@
           </tr>
         </thead>
         <tbody id="readings-tbody">
-          <tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">Select a session below to view readings</td></tr>
+          <tr><td colspan="9" style="text-align:center;padding:18px;color:var(--text-dim)">Select a Track Weekend below</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Sessions list -->
-    <div class="section-header">Track Day Log</div>
-    <div id="home-sessions-list">
-      <div class="empty-state"><div class="es-icon">🏎️</div>No track days yet.<br>Tap "+ New Track Day" to start.</div>
+    <!-- Track Weekends List -->
+    <div class="section-header">Track Weekends</div>
+    <div id="weekends-list">
+      <div class="empty-state"><div class="es-icon">🏎️</div>No track weekends yet.<br>Tap "+ New Track Weekend" to start.</div>
     </div>
     <div class="bottom-pad"></div>
   </div>
 </div>
 
-<!-- ==================== ADD SESSION MODAL ==================== -->
-<div class="modal-overlay" id="modal-add-session">
+<!-- ===== ADD WEEKEND MODAL ===== -->
+<div class="modal-overlay" id="modal-new-weekend">
   <div class="modal">
     <div class="modal-title">
-      <span>New Track Day</span>
-      <button class="modal-close" onclick="App.closeAddSession()">×</button>
+      <span>New Track Weekend</span>
+      <button class="modal-close" onclick="App.closeNewWeekend()">×</button>
     </div>
     <div class="form-group">
       <label>Event / Track Name</label>
-      <input type="text" id="ns-event" placeholder="e.g. NCM Motorsports Apr 2026">
+      <input type="text" id="nw-name" placeholder="e.g. NCM Motorsports Apr 2026">
     </div>
     <div class="form-group">
       <label>Car / Setup Notes (optional)</label>
-      <textarea id="ns-notes" placeholder="e.g. Michelin PS4S, stock suspension"></textarea>
+      <textarea id="nw-notes" placeholder="e.g. Michelin PS4S, stock suspension"></textarea>
     </div>
-    <button class="btn btn-primary" onclick="App.createSession()">Start Track Day →</button>
+    <button class="btn btn-primary" onclick="App.createWeekend()">Start Weekend →</button>
     <div style="height:env(safe-area-inset-bottom,12px)"></div>
   </div>
 </div>
 
-<!-- ==================== EDIT SESSION MODAL ==================== -->
-<div class="modal-overlay" id="modal-edit-session">
+<!-- ===== EDIT WEEKEND MODAL ===== -->
+<div class="modal-overlay" id="modal-edit-weekend">
   <div class="modal">
     <div class="modal-title">
-      <span>Edit Track Day</span>
-      <button class="modal-close" onclick="App.closeEditSession()">×</button>
+      <span>Edit Track Weekend</span>
+      <button class="modal-close" onclick="App.closeEditWeekend()">×</button>
     </div>
     <div class="form-group">
       <label>Event / Track Name</label>
-      <input type="text" id="es-event">
+      <input type="text" id="ew-name">
     </div>
     <div class="form-group">
       <label>Car / Setup Notes</label>
-      <textarea id="es-notes"></textarea>
+      <textarea id="ew-notes"></textarea>
     </div>
-    <button class="btn btn-primary" onclick="App.saveEditSession()">Save Changes</button>
+    <button class="btn btn-primary" onclick="App.saveEditWeekend()">Save Changes</button>
     <div style="margin-top:10px">
-      <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red)" onclick="App.deleteCurrentSession()">Delete Session</button>
+      <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red)" onclick="App.deleteCurrentWeekend()">Delete Weekend & All Readings</button>
     </div>
     <div style="height:env(safe-area-inset-bottom,12px)"></div>
   </div>
 </div>
 
-<!-- ==================== LOG READING MODAL ==================== -->
-<div class="modal-overlay" id="modal-log-reading">
+<!-- ===== LOG READING MODAL ===== -->
+<div class="modal-overlay" id="modal-log">
   <div class="modal">
     <div class="modal-title">
       <span>Log Reading</span>
       <button class="modal-close" onclick="App.closeLogReading()">×</button>
     </div>
 
-    <!-- Conditions row -->
-    <div class="row" style="margin-bottom:12px">
-      <div class="form-group">
-        <label>Ambient Temp (°F)</label>
-        <input type="number" id="lr-temp" placeholder="72">
+    <!-- Date & Session header -->
+    <div style="background:#000;border:1px solid var(--border);border-top:2px solid var(--gold);border-radius:6px;padding:10px 12px;margin-bottom:14px">
+      <div class="row" style="align-items:center">
+        <div style="flex:1">
+          <div style="font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">Date &amp; Session</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="date" id="lr-date" style="min-height:36px;font-size:14px;font-weight:700;padding:5px 8px;flex:1" onchange="App.onDateChange()">
+            <div style="text-align:right;white-space:nowrap">
+              <div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Session</div>
+              <div style="font-size:22px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums" id="lr-session-display">1</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Track Conditions</label>
-        <select id="lr-conditions">
-          <option>Dry</option>
-          <option>Damp</option>
-          <option>Wet</option>
-          <option>Mixed</option>
-          <option>Unknown</option>
-        </select>
-      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-muted)" id="lr-time-display"></div>
     </div>
 
-    <!-- Run name -->
-    <div class="form-group" style="margin-bottom:12px">
-      <label>Run Name</label>
-      <input type="text" id="lr-run-name" placeholder="e.g. Run 1, Morning, Session 2">
+    <!-- HC toggle -->
+    <div class="hc-toggle">
+      <button class="hc-btn cold active" id="lr-hc-cold" onclick="App.setLrHC('cold')">❄️ Cold — Before</button>
+      <button class="hc-btn hot" id="lr-hc-hot" onclick="App.setLrHC('hot')">🔥 Hot — After</button>
     </div>
 
-    <!-- Hot / Cold -->
-    <div class="hc-record-toggle">
-      <button class="hc-record-btn cold active" id="lr-hc-cold" onclick="App.setLrHC('cold')">❄️ Cold — Before</button>
-      <button class="hc-record-btn hot" id="lr-hc-hot" onclick="App.setLrHC('hot')">🔥 Hot — After</button>
-    </div>
-
-    <!-- 911 Top View Diagram -->
+    <!-- 911 diagram -->
     <div class="car-diagram-wrap">
       <svg viewBox="0 0 220 400" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="0">
+          <linearGradient id="bG" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stop-color="#1a1a1a"/><stop offset="50%" stop-color="#2a2a2a"/><stop offset="100%" stop-color="#1a1a1a"/>
           </linearGradient>
-          <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="gG" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#1a2a3a" stop-opacity="0.9"/><stop offset="100%" stop-color="#0a1a2a" stop-opacity="0.7"/>
           </linearGradient>
         </defs>
-        <!-- Rear bumper -->
         <rect x="58" y="330" width="104" height="18" rx="4" fill="#111"/>
-        <rect x="66" y="332" width="88" height="10" rx="2" fill="#1a1a1a"/>
         <rect x="60" y="332" width="26" height="8" rx="2" fill="#C5A028" opacity="0.7"/>
         <rect x="134" y="332" width="26" height="8" rx="2" fill="#C5A028" opacity="0.7"/>
-        <!-- Main body -->
-        <path d="M68,52 L152,52 C162,52 172,62 174,75 L180,140 C183,160 183,180 180,200 L178,270 C176,300 168,330 152,348 L68,348 C52,330 44,300 42,270 L40,200 C37,180 37,160 40,140 L46,75 C48,62 58,52 68,52 Z" fill="url(#bodyGrad)" stroke="#333" stroke-width="1"/>
-        <!-- Roof/cabin fastback -->
-        <path d="M82,95 L138,95 C148,95 155,100 157,110 L162,170 C163,185 155,195 145,195 L75,195 C65,195 57,185 58,170 L63,110 C65,100 72,95 82,95 Z" fill="url(#glassGrad)" stroke="#444" stroke-width="0.5"/>
-        <!-- Windshield -->
+        <path d="M68,52 L152,52 C162,52 172,62 174,75 L180,140 C183,160 183,180 180,200 L178,270 C176,300 168,330 152,348 L68,348 C52,330 44,300 42,270 L40,200 C37,180 37,160 40,140 L46,75 C48,62 58,52 68,52 Z" fill="url(#bG)" stroke="#333" stroke-width="1"/>
+        <path d="M82,95 L138,95 C148,95 155,100 157,110 L162,170 C163,185 155,195 145,195 L75,195 C65,195 57,185 58,170 L63,110 C65,100 72,95 82,95 Z" fill="url(#gG)" stroke="#444" stroke-width="0.5"/>
         <path d="M84,95 L136,95 L148,115 L72,115 Z" fill="#1a3050" opacity="0.8" stroke="#555" stroke-width="0.5"/>
-        <!-- Rear window -->
         <path d="M76,175 L144,175 L150,195 L70,195 Z" fill="#0a1520" opacity="0.7" stroke="#333" stroke-width="0.5"/>
-        <!-- Door line -->
         <line x1="43" y1="195" x2="177" y2="195" stroke="#444" stroke-width="0.7"/>
-        <!-- Hood / frunk -->
         <rect x="75" y="52" width="70" height="38" rx="4" fill="#222" stroke="#333" stroke-width="0.5"/>
         <line x1="90" y1="58" x2="130" y2="58" stroke="#444" stroke-width="0.5"/>
         <line x1="90" y1="84" x2="130" y2="84" stroke="#444" stroke-width="0.5"/>
         <circle cx="110" cy="71" r="3" fill="#333" stroke="#444" stroke-width="0.5"/>
-        <!-- Engine lid / rear -->
         <rect x="70" y="300" width="80" height="40" rx="4" fill="#1e1e1e" stroke="#333" stroke-width="0.5"/>
         <line x1="78" y1="308" x2="142" y2="308" stroke="#333" stroke-width="1"/>
         <line x1="78" y1="316" x2="142" y2="316" stroke="#333" stroke-width="1"/>
         <line x1="78" y1="324" x2="142" y2="324" stroke="#333" stroke-width="1"/>
-        <line x1="78" y1="332" x2="142" y2="332" stroke="#333" stroke-width="1"/>
-        <!-- Front bumper / lights / splitter -->
         <path d="M78,34 L142,34 C155,34 165,42 166,52 L54,52 C55,42 65,34 78,34 Z" fill="#111" stroke="#333" stroke-width="0.5"/>
         <ellipse cx="82" cy="44" rx="12" ry="5" fill="#D5001C" opacity="0.5"/>
         <ellipse cx="138" cy="44" rx="12" ry="5" fill="#D5001C" opacity="0.5"/>
         <rect x="72" y="34" width="76" height="4" rx="1" fill="#111"/>
-        <!-- Rear wing -->
         <rect x="50" y="340" width="120" height="6" rx="3" fill="#222" stroke="#D5001C" stroke-width="1"/>
-        <!-- Side mirrors -->
         <ellipse cx="38" cy="102" rx="7" ry="4" fill="#1a1a1a" stroke="#333" stroke-width="0.5" transform="rotate(-10,38,102)"/>
         <ellipse cx="182" cy="102" rx="7" ry="4" fill="#1a1a1a" stroke="#333" stroke-width="0.5" transform="rotate(10,182,102)"/>
-        <!-- Tire position markers -->
         <circle cx="36" cy="78" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
         <text x="36" y="82" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff">FL</text>
         <circle cx="184" cy="78" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
@@ -417,40 +390,51 @@
         <text x="36" y="299" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff">RL</text>
         <circle cx="184" cy="295" r="10" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
         <text x="184" y="299" text-anchor="middle" font-size="9" font-weight="800" fill="#58a6ff">RR</text>
-        <!-- Porsche crest -->
         <circle cx="110" cy="145" r="10" fill="none" stroke="#C5A028" stroke-width="1" opacity="0.4"/>
         <text x="110" y="149" text-anchor="middle" font-size="9" fill="#C5A028" opacity="0.5">P</text>
       </svg>
     </div>
 
-    <!-- 2x2 Tire inputs -->
-    <div class="tire-inputs-grid" id="lr-tire-grid">
+    <!-- PSI Inputs -->
+    <div class="tire-inputs-grid">
       <div class="tire-input-cell" id="lr-cell-FL">
         <div class="itc-label">⬅ Front Left</div>
-        <input type="number" id="lr-FL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateLrCellState()">
+        <input type="number" id="lr-FL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateLrCells()">
         <div class="psi-label">PSI</div>
       </div>
       <div class="tire-input-cell" id="lr-cell-FR">
         <div class="itc-label">Front Right ➡</div>
-        <input type="number" id="lr-FR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateLrCellState()">
+        <input type="number" id="lr-FR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateLrCells()">
         <div class="psi-label">PSI</div>
       </div>
       <div class="tire-input-cell" id="lr-cell-RL">
         <div class="itc-label">⬅ Rear Left</div>
-        <input type="number" id="lr-RL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateLrCellState()">
+        <input type="number" id="lr-RL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateLrCells()">
         <div class="psi-label">PSI</div>
       </div>
       <div class="tire-input-cell" id="lr-cell-RR">
         <div class="itc-label">Rear Right ➡</div>
-        <input type="number" id="lr-RR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateLrCellState()">
+        <input type="number" id="lr-RR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateLrCells()">
         <div class="psi-label">PSI</div>
       </div>
     </div>
 
-    <!-- Notes -->
+    <!-- Conditions + Notes -->
+    <div class="row" style="margin-bottom:12px">
+      <div class="form-group">
+        <label>Ambient Temp (°F)</label>
+        <input type="number" id="lr-temp" placeholder="72">
+      </div>
+      <div class="form-group">
+        <label>Track Conditions</label>
+        <select id="lr-conditions">
+          <option>Dry</option><option>Damp</option><option>Wet</option><option>Mixed</option><option>Unknown</option>
+        </select>
+      </div>
+    </div>
     <div class="form-group" style="margin-bottom:14px">
       <label>Notes</label>
-      <input type="text" id="lr-notes" placeholder="e.g. slight push in T1, tire pressures feel right">
+      <input type="text" id="lr-notes" placeholder="e.g. slight push in T1">
     </div>
 
     <button class="btn btn-primary" onclick="App.logReading()">Log Reading</button>
@@ -458,7 +442,7 @@
   </div>
 </div>
 
-<!-- ==================== EDIT READING MODAL ==================== -->
+<!-- ===== EDIT READING MODAL ===== -->
 <div class="modal-overlay" id="modal-edit-reading">
   <div class="modal">
     <div class="modal-title">
@@ -466,34 +450,18 @@
       <button class="modal-close" onclick="App.closeEdit()">×</button>
     </div>
     <div class="form-group">
-      <label>Run Name</label>
-      <input type="text" id="er-run-name">
+      <label>Session #</label>
+      <input type="number" id="er-session" min="1" step="1">
     </div>
-    <div class="hc-record-toggle" style="margin-bottom:12px">
-      <button class="hc-record-btn cold" id="er-hc-cold" onclick="App.setErHC('cold')">❄️ Cold</button>
-      <button class="hc-record-btn hot" id="er-hc-hot" onclick="App.setErHC('hot')">🔥 Hot</button>
+    <div class="hc-toggle" style="margin-bottom:12px">
+      <button class="hc-btn cold" id="er-hc-cold" onclick="App.setErHC('cold')">❄️ Cold</button>
+      <button class="hc-btn hot" id="er-hc-hot" onclick="App.setErHC('hot')">🔥 Hot</button>
     </div>
     <div class="tire-inputs-grid">
-      <div class="tire-input-cell">
-        <div class="itc-label">⬅ Front Left</div>
-        <input type="number" id="er-FL" step="0.5" min="0" max="60" placeholder="0.0">
-        <div class="psi-label">PSI</div>
-      </div>
-      <div class="tire-input-cell">
-        <div class="itc-label">Front Right ➡</div>
-        <input type="number" id="er-FR" step="0.5" min="0" max="60" placeholder="0.0">
-        <div class="psi-label">PSI</div>
-      </div>
-      <div class="tire-input-cell">
-        <div class="itc-label">⬅ Rear Left</div>
-        <input type="number" id="er-RL" step="0.5" min="0" max="60" placeholder="0.0">
-        <div class="psi-label">PSI</div>
-      </div>
-      <div class="tire-input-cell">
-        <div class="itc-label">Rear Right ➡</div>
-        <input type="number" id="er-RR" step="0.5" min="0" max="60" placeholder="0.0">
-        <div class="psi-label">PSI</div>
-      </div>
+      <div class="tire-input-cell"><div class="itc-label">⬅ Front Left</div><input type="number" id="er-FL" step="0.5" min="0" max="60"><div class="psi-label">PSI</div></div>
+      <div class="tire-input-cell"><div class="itc-label">Front Right ➡</div><input type="number" id="er-FR" step="0.5" min="0" max="60"><div class="psi-label">PSI</div></div>
+      <div class="tire-input-cell"><div class="itc-label">⬅ Rear Left</div><input type="number" id="er-RL" step="0.5" min="0" max="60"><div class="psi-label">PSI</div></div>
+      <div class="tire-input-cell"><div class="itc-label">Rear Right ➡</div><input type="number" id="er-RR" step="0.5" min="0" max="60"><div class="psi-label">PSI</div></div>
     </div>
     <div class="form-group" style="margin-bottom:14px">
       <label>Notes</label>
@@ -501,266 +469,299 @@
     </div>
     <div class="row">
       <button class="btn btn-primary" style="flex:1" onclick="App.saveEdit()">Save</button>
-      <button class="btn btn-secondary btn-sm" style="border-color:var(--red);color:var(--red);width:auto;padding:0 18px;flex:0 0 auto" onclick="App.deleteFromEdit()">Delete</button>
+      <button class="btn btn-secondary btn-sm" style="border-color:var(--red);color:var(--red);flex:0 0 auto;padding:0 16px" onclick="App.deleteFromEdit()">Delete</button>
     </div>
     <div style="height:env(safe-area-inset-bottom,12px)"></div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
 // =====================
 // DATA MODEL
-// Session: { id, event, track, notes, createdAt }
-// Batch:   { id, sessionId, timestamp, state:'cold'|'hot', runName, ambientTemp, conditions, note, FL, FR, RL, RR }
+// Weekend: { id, name, notes, createdAt }
+// Reading: { id, weekendId, date (YYYY-MM-DD), sessionNum, timestamp, state:'cold'|'hot', ambientTemp, conditions, note, FL, FR, RL, RR }
 // =====================
-
 const DB = {
-  getSessions()    { return JSON.parse(localStorage.getItem('hpde_sessions') || '[]'); },
-  saveSessions(d)  { localStorage.setItem('hpde_sessions', JSON.stringify(d)); },
-  getBatches()     { return JSON.parse(localStorage.getItem('hpde_batches') || '[]'); },
-  saveBatches(d)   { localStorage.setItem('hpde_batches', JSON.stringify(d)); },
-  addSession(s)    { const d = this.getSessions(); d.unshift(s); this.saveSessions(d); },
-  addBatch(b)      { const d = this.getBatches(); d.push(b); this.saveBatches(d); },
-  deleteBatch(id)  { this.saveBatches(this.getBatches().filter(b => b.id !== id)); },
-  deleteSession(id){ this.saveSessions(this.getSessions().filter(s => s.id !== id)); this.saveBatches(this.getBatches().filter(b => b.sessionId !== id)); },
-  getSessionBatches(sid) { return this.getBatches().filter(b => b.sessionId === sid); },
+  getW()           { return JSON.parse(localStorage.getItem('hpde_weekends') || '[]'); },
+  saveW(d)         { localStorage.setItem('hpde_weekends', JSON.stringify(d)); },
+  getR()           { return JSON.parse(localStorage.getItem('hpde_readings') || '[]'); },
+  saveR(d)         { localStorage.setItem('hpde_readings', JSON.stringify(d)); },
+  addW(w)          { const d = this.getW(); d.unshift(w); this.saveW(d); },
+  addR(r)          { const d = this.getR(); d.push(r); this.saveR(d); },
+  deleteR(id)      { this.saveR(this.getR().filter(r => r.id !== id)); },
+  deleteW(id)      { this.saveW(this.getW().filter(w => w.id !== id)); this.saveR(this.getR().filter(r => r.weekendId !== id)); },
+  getWReadings(wid){ return this.getR().filter(r => r.weekendId === wid); },
 
   migrate() {
-    const old = localStorage.getItem('hpde_entries');
-    if (!old) return;
-    try {
-      const entries = JSON.parse(old);
-      const groups = {};
-      entries.forEach(e => {
-        const key = e.sessionId + '_' + Math.floor(new Date(e.timestamp).getTime() / 5000);
-        if (!groups[key]) groups[key] = { sessionId: e.sessionId, timestamp: e.timestamp, state: e.state || 'cold', note: '', FL:null, FR:null, RL:null, RR:null };
-        groups[key][e.wheel] = e.psi;
-      });
-      const batches = this.getBatches();
-      Object.values(groups).forEach(g => batches.push({ id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2), runName: 'Run 1', ...g }));
-      this.saveBatches(batches);
-      localStorage.removeItem('hpde_entries');
-    } catch(e) {}
-    const batches = this.getBatches().map(b => {
+    // If new keys already exist, skip
+    if (localStorage.getItem('hpde_weekends') !== null) return;
+    // Migrate hpde_sessions → hpde_weekends
+    const oldSessions = JSON.parse(localStorage.getItem('hpde_sessions') || '[]');
+    const weekends = oldSessions.map(s => ({ id: s.id, name: s.event || s.track || 'Track Weekend', notes: s.notes || '', createdAt: s.createdAt }));
+    this.saveW(weekends);
+    // Migrate hpde_batches → hpde_readings
+    const oldBatches = JSON.parse(localStorage.getItem('hpde_batches') || '[]').map(b => {
       ['FL','FR','RL','RR'].forEach(w => { if (b[w] && typeof b[w] === 'object') b[w] = b[w].psi || null; });
       if (!b.state) b.state = 'cold';
-      if (!b.runName) b.runName = 'Run 1';
       return b;
     });
-    this.saveBatches(batches);
+    // Try to extract session number from runName like "Run 1" → 1
+    const readings = oldBatches.map(b => {
+      const match = (b.runName || '').match(/\d+/);
+      const sessionNum = match ? parseInt(match[0]) : 1;
+      const date = b.timestamp ? b.timestamp.slice(0, 10) : new Date().toISOString().slice(0, 10);
+      return { id: b.id, weekendId: b.sessionId, date, sessionNum, timestamp: b.timestamp, state: b.state, ambientTemp: b.ambientTemp || null, conditions: b.conditions || 'Dry', note: b.note || '', FL: b.FL, FR: b.FR, RL: b.RL, RR: b.RR };
+    });
+    this.saveR(readings);
   }
 };
 DB.migrate();
 
 const App = {
-  currentSessionId: null,   // selected session
-  lrHCState: 'cold',       // log reading hot/cold state
-  erHCState: 'cold',       // edit reading hot/cold state
-  _editBatchId: null,
-  _lastRunName: 'Run 1',   // remember last run name for auto-fill
+  currentWeekendId: null,
+  lrHCState: 'cold',
+  lrSessionNum: 1,
+  lrDate: '',
+  erHCState: 'cold',
+  _editReadingId: null,
 
-  // ---- SESSION SELECTION ----
-  selectSession(id) {
-    this.currentSessionId = id;
-    const s = DB.getSessions().find(s => s.id === id);
-    // Update active session bar
-    const bar = document.getElementById('active-session-bar');
-    const nameEl = document.getElementById('asb-name');
-    const notesItem = document.getElementById('asb-notes-item');
-    const notesEl = document.getElementById('asb-notes');
-    if (s) {
-      nameEl.textContent = s.event || 'Track Day';
-      if (s.notes) {
-        notesEl.textContent = s.notes;
-        notesItem.style.display = '';
-      } else {
-        notesItem.style.display = 'none';
-      }
-      bar.style.display = '';
-    } else {
-      bar.style.display = 'none';
-    }
-    // Show log reading button
-    document.getElementById('btn-log-reading').style.display = id ? 'flex' : 'none';
-    this.renderSessionsList();
-    this.renderTable();
-  },
-
-  // ---- RENDER SESSIONS LIST ----
-  renderSessionsList() {
-    const sessions = DB.getSessions();
-    const batches = DB.getBatches();
-    const el = document.getElementById('home-sessions-list');
-    if (!sessions.length) {
-      el.innerHTML = '<div class="empty-state"><div class="es-icon">🏎️</div>No track days yet.<br>Tap "+ New Track Day" to start.</div>';
+  // ======= WEEKEND LIST =======
+  renderWeekends() {
+    const weekends = DB.getW();
+    const readings = DB.getR();
+    const el = document.getElementById('weekends-list');
+    if (!weekends.length) {
+      el.innerHTML = '<div class="empty-state"><div class="es-icon">🏎️</div>No track weekends yet.<br>Tap "+ New Track Weekend" to start.</div>';
       return;
     }
-    el.innerHTML = sessions.map(s => {
-      const count = batches.filter(b => b.sessionId === s.id).length;
-      const date = new Date(s.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
-      const selected = s.id === this.currentSessionId;
-      return `<div class="session-item${selected ? ' selected' : ''}" onclick="App.selectSession('${s.id}')">
-        <div class="si-main">
-          <div class="si-title">${esc(s.event || 'Track Day')}</div>
-          <div class="si-sub">${date}${s.notes ? ' · ' + esc(s.notes.slice(0,35)) : ''}</div>
+    el.innerHTML = weekends.map(w => {
+      const cnt = readings.filter(r => r.weekendId === w.id).length;
+      const date = new Date(w.createdAt).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+      const sel = w.id === this.currentWeekendId;
+      return `<div class="list-item${sel?' selected':''}" onclick="App.selectWeekend('${w.id}')">
+        <div class="li-main">
+          <div class="li-title">${esc(w.name)}</div>
+          <div class="li-sub">${date}${w.notes ? ' · ' + esc(w.notes.slice(0,40)) : ''}</div>
         </div>
-        <span class="si-badge">${count}</span>
+        <span class="li-badge">${cnt}</span>
         <span class="chevron">›</span>
       </div>`;
     }).join('');
   },
 
-  // ---- RENDER READINGS TABLE ----
+  // ======= SELECT WEEKEND =======
+  selectWeekend(id) {
+    this.currentWeekendId = id;
+    const w = DB.getW().find(w => w.id === id);
+    // Update context bar
+    const ctx = document.getElementById('session-context');
+    if (w) {
+      document.getElementById('sc-name').textContent = w.name;
+      ctx.style.display = '';
+    } else {
+      ctx.style.display = 'none';
+    }
+    document.getElementById('btn-log').style.display = id ? 'flex' : 'none';
+    this.updateContextBar();
+    this.renderWeekends();
+    this.renderTable();
+  },
+
+  // Recalculate next session num & HC state for context bar
+  updateContextBar() {
+    if (!this.currentWeekendId) return;
+    const today = todayStr();
+    const { sessionNum, hcState } = this.calcNextSession(this.currentWeekendId, today);
+    document.getElementById('sc-session').textContent = 'Session ' + sessionNum;
+    document.getElementById('sc-hc').textContent = hcState === 'cold' ? 'Cold' : 'Hot';
+    document.getElementById('sc-date').textContent = fmtDate(today);
+    const hcChip = document.getElementById('sc-hc-chip');
+    hcChip.innerHTML = (hcState === 'cold' ? '❄️' : '🔥') + ' <strong>' + (hcState === 'cold' ? 'Cold' : 'Hot') + '</strong>';
+  },
+
+  // ======= CALCULATE NEXT SESSION =======
+  // Returns { sessionNum, hcState } for a given weekend + date
+  calcNextSession(weekendId, date) {
+    const readings = DB.getWReadings(weekendId).filter(r => r.date === date);
+    if (!readings.length) return { sessionNum: 1, hcState: 'cold' };
+    const maxSess = Math.max(...readings.map(r => r.sessionNum));
+    const lastOnMaxSess = readings.filter(r => r.sessionNum === maxSess).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+    if (lastOnMaxSess && lastOnMaxSess.state === 'cold') {
+      // Last reading was cold → next is hot, same session
+      return { sessionNum: maxSess, hcState: 'hot' };
+    } else {
+      // Last reading was hot (pair complete) → next session
+      return { sessionNum: maxSess + 1, hcState: 'cold' };
+    }
+  },
+
+  // ======= RENDER TABLE =======
   renderTable() {
-    const sid = this.currentSessionId;
-    const all = sid ? DB.getSessionBatches(sid) : [];
-    const batches = [...all].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-    document.getElementById('reading-count').textContent =
-      all.length ? all.length + ' reading' + (all.length!==1?'s':'') : '';
+    const wid = this.currentWeekendId;
+    const all = wid ? DB.getWReadings(wid) : [];
+    document.getElementById('reading-count').textContent = all.length ? all.length + ' reading' + (all.length !== 1 ? 's' : '') : '';
     const tbody = document.getElementById('readings-tbody');
-    if (!batches.length) {
-      const msg = sid ? 'No readings yet — tap "Log Reading" below' : 'Select a session below to view readings';
-      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">${msg}</td></tr>`;
+    if (!all.length) {
+      const msg = wid ? 'No readings yet — tap "Log Reading"' : 'Select a Track Weekend below';
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:18px;color:var(--text-dim)">${msg}</td></tr>`;
       return;
     }
-    // Group by run name
-    const grouped = [];
-    const seen = {};
-    batches.forEach(b => {
-      const key = b.runName || 'Run 1';
-      if (!seen[key]) { seen[key] = []; grouped.push({ name: key, rows: seen[key] }); }
-      seen[key].push(b);
+    // Sort newest first, group by date then session
+    const sorted = [...all].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    // Group: date → sessionNum → readings
+    const dateGroups = [];
+    const dateSeen = {};
+    sorted.forEach(r => {
+      if (!dateSeen[r.date]) { dateSeen[r.date] = {}; dateGroups.push({ date: r.date, sessions: dateSeen[r.date] }); }
+      if (!dateSeen[r.date][r.sessionNum]) dateSeen[r.date][r.sessionNum] = [];
+      dateSeen[r.date][r.sessionNum].push(r);
     });
     let html = '';
-    grouped.forEach((group, gi) => {
-      if (gi > 0) html += `<tr><td colspan="9" style="padding:0"><div style="height:2px;background:var(--red);opacity:0.25"></div></td></tr>`;
-      group.rows.forEach((b, ri) => {
-        const time = new Date(b.timestamp).toLocaleString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-        const isCold = b.state === 'cold';
-        const cls = isCold ? 'cold' : 'hot';
-        const cell = w => (b[w] !== null && b[w] !== undefined) ? `<td class="td-psi ${cls}">${b[w]}</td>` : `<td class="td-psi empty">—</td>`;
-        const runCell = ri === 0 ? `<td class="td-run" rowspan="${group.rows.length}">${esc(group.name)}</td>` : '';
-        html += `<tr class="row-${cls}">${runCell}
-          <td class="td-time">${time}</td>
-          <td class="td-state">${isCold ? '❄️' : '🔥'}</td>
-          ${cell('FL')}${cell('FR')}${cell('RL')}${cell('RR')}
-          <td class="td-notes">${esc(b.note||'')}</td>
-          <td class="td-actions">
-            <button class="edit-btn" onclick="App.openEdit('${b.id}')">✏️</button>
-            <button class="del-btn" onclick="App.deleteBatch('${b.id}')">×</button>
-          </td>
-        </tr>`;
+    dateGroups.forEach(dg => {
+      // Date separator row
+      html += `<tr><td class="td-date-sep" colspan="9">📅 ${fmtDate(dg.date)}</td></tr>`;
+      const sessNums = Object.keys(dg.sessions).map(Number).sort((a,b) => b - a);
+      sessNums.forEach(sn => {
+        const rows = dg.sessions[sn].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        rows.forEach((r, ri) => {
+          const isCold = r.state === 'cold';
+          const cls = isCold ? 'cold' : 'hot';
+          const time = new Date(r.timestamp).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+          const cell = w => (r[w] !== null && r[w] !== undefined) ? `<td class="td-psi ${cls}">${r[w]}</td>` : `<td class="td-psi empty">—</td>`;
+          const sessCell = ri === 0 ? `<td class="td-sess" rowspan="${rows.length}">S${sn}</td>` : '';
+          html += `<tr class="row-${cls}">${sessCell}
+            <td class="td-time">${time}</td>
+            <td class="td-state">${isCold ? '❄️' : '🔥'}</td>
+            ${cell('FL')}${cell('FR')}${cell('RL')}${cell('RR')}
+            <td class="td-notes">${esc(r.note||'')}</td>
+            <td class="td-actions">
+              <button class="edit-btn" onclick="App.openEdit('${r.id}')">✏️</button>
+              <button class="del-btn" onclick="App.deleteSingle('${r.id}')">×</button>
+            </td>
+          </tr>`;
+        });
       });
     });
     tbody.innerHTML = html;
   },
 
-  // ---- ADD SESSION MODAL ----
-  openAddSession() {
-    document.getElementById('ns-event').value = '';
-    document.getElementById('ns-notes').value = '';
-    document.getElementById('modal-add-session').classList.add('open');
+  // ======= NEW WEEKEND =======
+  openNewWeekend() {
+    document.getElementById('nw-name').value = '';
+    document.getElementById('nw-notes').value = '';
+    document.getElementById('modal-new-weekend').classList.add('open');
   },
-  closeAddSession() { document.getElementById('modal-add-session').classList.remove('open'); },
-
-  createSession() {
-    const event = document.getElementById('ns-event').value.trim();
-    if (!event) { alert('Enter an event / track name.'); return; }
-    const s = { id: 'sess_' + Date.now(), event, track: event, notes: document.getElementById('ns-notes').value.trim(), createdAt: new Date().toISOString() };
-    DB.addSession(s);
-    this.closeAddSession();
-    this.selectSession(s.id);
-    this.toast('TRACK DAY STARTED');
+  closeNewWeekend() { document.getElementById('modal-new-weekend').classList.remove('open'); },
+  createWeekend() {
+    const name = document.getElementById('nw-name').value.trim();
+    if (!name) { alert('Enter an event / track name.'); return; }
+    const w = { id: 'w_' + Date.now(), name, notes: document.getElementById('nw-notes').value.trim(), createdAt: new Date().toISOString() };
+    DB.addW(w);
+    this.closeNewWeekend();
+    this.selectWeekend(w.id);
+    this.toast('TRACK WEEKEND STARTED');
   },
 
-  // ---- EDIT SESSION MODAL ----
-  openEditSession() {
-    if (!this.currentSessionId) return;
-    const s = DB.getSessions().find(s => s.id === this.currentSessionId);
-    if (!s) return;
-    document.getElementById('es-event').value = s.event || '';
-    document.getElementById('es-notes').value = s.notes || '';
-    document.getElementById('modal-edit-session').classList.add('open');
+  // ======= EDIT WEEKEND =======
+  openEditWeekend() {
+    const w = DB.getW().find(w => w.id === this.currentWeekendId);
+    if (!w) return;
+    document.getElementById('ew-name').value = w.name;
+    document.getElementById('ew-notes').value = w.notes || '';
+    document.getElementById('modal-edit-weekend').classList.add('open');
   },
-  closeEditSession() { document.getElementById('modal-edit-session').classList.remove('open'); },
-
-  saveEditSession() {
-    if (!this.currentSessionId) return;
-    const sessions = DB.getSessions();
-    const idx = sessions.findIndex(s => s.id === this.currentSessionId);
+  closeEditWeekend() { document.getElementById('modal-edit-weekend').classList.remove('open'); },
+  saveEditWeekend() {
+    const ws = DB.getW();
+    const idx = ws.findIndex(w => w.id === this.currentWeekendId);
     if (idx === -1) return;
-    const event = document.getElementById('es-event').value.trim();
-    if (!event) { alert('Enter an event / track name.'); return; }
-    sessions[idx].event = event;
-    sessions[idx].track = event;
-    sessions[idx].notes = document.getElementById('es-notes').value.trim();
-    DB.saveSessions(sessions);
-    this.closeEditSession();
-    this.selectSession(this.currentSessionId);
-    this.toast('SESSION UPDATED');
+    const name = document.getElementById('ew-name').value.trim();
+    if (!name) { alert('Enter a name.'); return; }
+    ws[idx].name = name;
+    ws[idx].notes = document.getElementById('ew-notes').value.trim();
+    DB.saveW(ws);
+    this.closeEditWeekend();
+    this.selectWeekend(this.currentWeekendId);
+    this.toast('WEEKEND UPDATED');
   },
-
-  deleteCurrentSession() {
-    if (!this.currentSessionId) return;
-    if (!confirm('Delete this session and all its readings? Cannot be undone.')) return;
-    DB.deleteSession(this.currentSessionId);
-    this.currentSessionId = null;
-    this.closeEditSession();
-    document.getElementById('active-session-bar').style.display = 'none';
-    document.getElementById('btn-log-reading').style.display = 'none';
-    this.renderSessionsList();
+  deleteCurrentWeekend() {
+    if (!confirm('Delete this weekend and ALL readings? Cannot be undone.')) return;
+    const id = this.currentWeekendId;
+    this.currentWeekendId = null;
+    DB.deleteW(id);
+    this.closeEditWeekend();
+    document.getElementById('session-context').style.display = 'none';
+    document.getElementById('btn-log').style.display = 'none';
+    this.renderWeekends();
     this.renderTable();
-    this.toast('SESSION DELETED');
+    this.toast('WEEKEND DELETED');
   },
 
-  // ---- LOG READING MODAL ----
+  // ======= LOG READING =======
   openLogReading() {
-    if (!this.currentSessionId) { alert('Select a session first.'); return; }
-    // Reset form
+    if (!this.currentWeekendId) { alert('Select a Track Weekend first.'); return; }
+    const today = todayStr();
+    this.lrDate = today;
+    const { sessionNum, hcState } = this.calcNextSession(this.currentWeekendId, today);
+    this.lrSessionNum = sessionNum;
+    this.lrHCState = hcState;
+
+    document.getElementById('lr-date').value = today;
+    document.getElementById('lr-session-display').textContent = sessionNum;
+    document.getElementById('lr-time-display').textContent = '🕐 ' + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', second:'2-digit'});
+    document.getElementById('lr-hc-cold').classList.toggle('active', hcState === 'cold');
+    document.getElementById('lr-hc-hot').classList.toggle('active', hcState === 'hot');
+
     ['FL','FR','RL','RR'].forEach(w => document.getElementById('lr-'+w).value = '');
     document.getElementById('lr-notes').value = '';
     document.getElementById('lr-temp').value = '';
     document.getElementById('lr-conditions').value = 'Dry';
-    document.getElementById('lr-run-name').value = this._lastRunName;
-    this.lrHCState = 'cold';
-    document.getElementById('lr-hc-cold').classList.add('active');
-    document.getElementById('lr-hc-hot').classList.remove('active');
-    this.updateLrCellState();
-    document.getElementById('modal-log-reading').classList.add('open');
+    this.updateLrCells();
+    document.getElementById('modal-log').classList.add('open');
   },
-  closeLogReading() { document.getElementById('modal-log-reading').classList.remove('open'); },
+  closeLogReading() { document.getElementById('modal-log').classList.remove('open'); },
+
+  onDateChange() {
+    this.lrDate = document.getElementById('lr-date').value;
+    const { sessionNum, hcState } = this.calcNextSession(this.currentWeekendId, this.lrDate);
+    this.lrSessionNum = sessionNum;
+    this.lrHCState = hcState;
+    document.getElementById('lr-session-display').textContent = sessionNum;
+    document.getElementById('lr-hc-cold').classList.toggle('active', hcState === 'cold');
+    document.getElementById('lr-hc-hot').classList.toggle('active', hcState === 'hot');
+    this.updateLrCells();
+  },
 
   setLrHC(state) {
     this.lrHCState = state;
     document.getElementById('lr-hc-cold').classList.toggle('active', state === 'cold');
     document.getElementById('lr-hc-hot').classList.toggle('active', state === 'hot');
-    this.updateLrCellState();
+    this.updateLrCells();
   },
 
-  updateLrCellState() {
+  updateLrCells() {
     const cls = this.lrHCState === 'cold' ? 'cold-active' : 'hot-active';
     const rem = this.lrHCState === 'cold' ? 'hot-active' : 'cold-active';
     ['FL','FR','RL','RR'].forEach(w => {
       const cell = document.getElementById('lr-cell-'+w);
-      if (!cell) return;
       const v = document.getElementById('lr-'+w).value;
       cell.classList.toggle(cls, v !== '');
-      cell.classList.toggle(rem, v === '');
+      cell.classList.toggle(rem, false);
     });
   },
 
   logReading() {
-    if (!this.currentSessionId) return;
-    const runName = document.getElementById('lr-run-name').value.trim() || this._lastRunName;
-    const batch = {
-      id: 'b_' + Date.now(),
-      sessionId: this.currentSessionId,
+    if (!this.currentWeekendId) return;
+    const date = document.getElementById('lr-date').value || todayStr();
+    const r = {
+      id: 'r_' + Date.now(),
+      weekendId: this.currentWeekendId,
+      date,
+      sessionNum: this.lrSessionNum,
       timestamp: new Date().toISOString(),
       state: this.lrHCState,
-      runName,
       ambientTemp: parseFloat(document.getElementById('lr-temp').value) || null,
       conditions: document.getElementById('lr-conditions').value,
       note: document.getElementById('lr-notes').value.trim()
@@ -768,33 +769,44 @@ const App = {
     let hasAny = false;
     ['FL','FR','RL','RR'].forEach(w => {
       const v = document.getElementById('lr-'+w).value;
-      batch[w] = (v !== '' && !isNaN(parseFloat(v))) ? parseFloat(v) : null;
-      if (batch[w] !== null) hasAny = true;
+      r[w] = (v !== '' && !isNaN(parseFloat(v))) ? parseFloat(v) : null;
+      if (r[w] !== null) hasAny = true;
     });
     if (!hasAny) { alert('Enter at least one tire pressure.'); return; }
-    this._lastRunName = runName;
     const wasCold = this.lrHCState === 'cold';
-    DB.addBatch(batch);
+    DB.addR(r);
+
+    // Advance state for next reading
+    if (wasCold) {
+      // Same session, switch to hot
+      this.lrHCState = 'hot';
+    } else {
+      // Pair complete → next session, back to cold
+      this.lrSessionNum++;
+      this.lrHCState = 'cold';
+    }
+
     this.closeLogReading();
     this.renderTable();
-    this.renderSessionsList();
-    this.toast((wasCold ? '❄️ COLD' : '🔥 HOT') + ' LOGGED');
+    this.renderWeekends();
+    this.updateContextBar();
+    this.toast((wasCold ? '❄️ COLD' : '🔥 HOT') + ' — SESSION ' + r.sessionNum);
   },
 
-  // ---- EDIT READING MODAL ----
+  // ======= EDIT READING =======
   openEdit(id) {
-    const b = DB.getBatches().find(b => b.id === id);
-    if (!b) return;
-    this._editBatchId = id;
-    document.getElementById('er-run-name').value = b.runName || '';
-    document.getElementById('er-notes').value = b.note || '';
-    ['FL','FR','RL','RR'].forEach(w => { document.getElementById('er-'+w).value = (b[w] !== null && b[w] !== undefined) ? b[w] : ''; });
-    this.erHCState = b.state || 'cold';
+    const r = DB.getR().find(r => r.id === id);
+    if (!r) return;
+    this._editReadingId = id;
+    document.getElementById('er-session').value = r.sessionNum || 1;
+    document.getElementById('er-notes').value = r.note || '';
+    ['FL','FR','RL','RR'].forEach(w => { document.getElementById('er-'+w).value = (r[w] !== null && r[w] !== undefined) ? r[w] : ''; });
+    this.erHCState = r.state || 'cold';
     document.getElementById('er-hc-cold').classList.toggle('active', this.erHCState === 'cold');
     document.getElementById('er-hc-hot').classList.toggle('active', this.erHCState === 'hot');
     document.getElementById('modal-edit-reading').classList.add('open');
   },
-  closeEdit() { this._editBatchId = null; document.getElementById('modal-edit-reading').classList.remove('open'); },
+  closeEdit() { this._editReadingId = null; document.getElementById('modal-edit-reading').classList.remove('open'); },
 
   setErHC(state) {
     this.erHCState = state;
@@ -803,59 +815,60 @@ const App = {
   },
 
   saveEdit() {
-    if (!this._editBatchId) return;
-    const batches = DB.getBatches();
-    const idx = batches.findIndex(b => b.id === this._editBatchId);
+    if (!this._editReadingId) return;
+    const rs = DB.getR();
+    const idx = rs.findIndex(r => r.id === this._editReadingId);
     if (idx === -1) return;
-    const b = batches[idx];
-    b.runName = document.getElementById('er-run-name').value.trim() || b.runName || 'Run 1';
-    b.state = this.erHCState;
-    b.note = document.getElementById('er-notes').value.trim();
-    ['FL','FR','RL','RR'].forEach(w => { const v = document.getElementById('er-'+w).value; b[w] = v !== '' ? parseFloat(v) : null; });
-    batches[idx] = b;
-    DB.saveBatches(batches);
+    rs[idx].sessionNum = parseInt(document.getElementById('er-session').value) || rs[idx].sessionNum;
+    rs[idx].state = this.erHCState;
+    rs[idx].note = document.getElementById('er-notes').value.trim();
+    ['FL','FR','RL','RR'].forEach(w => { const v = document.getElementById('er-'+w).value; rs[idx][w] = v !== '' ? parseFloat(v) : null; });
+    DB.saveR(rs);
     this.closeEdit();
     this.renderTable();
+    this.updateContextBar();
     this.toast('READING UPDATED');
   },
 
   deleteFromEdit() {
-    if (!this._editBatchId) return;
+    if (!this._editReadingId) return;
     if (!confirm('Delete this reading?')) return;
-    DB.deleteBatch(this._editBatchId);
+    DB.deleteR(this._editReadingId);
     this.closeEdit();
     this.renderTable();
-    this.renderSessionsList();
+    this.renderWeekends();
+    this.updateContextBar();
     this.toast('READING DELETED');
   },
 
-  deleteBatch(id) {
+  deleteSingle(id) {
     if (!confirm('Delete this reading?')) return;
-    DB.deleteBatch(id);
+    DB.deleteR(id);
     this.renderTable();
-    this.renderSessionsList();
+    this.renderWeekends();
+    this.updateContextBar();
     this.toast('READING DELETED');
   },
 
-  // ---- CSV EXPORT ----
+  // ======= CSV EXPORT =======
   exportCSV() {
-    const sessions = DB.getSessions();
-    const batches = DB.getBatches();
-    if (!batches.length) { alert('No data to export yet.'); return; }
-    const hdrs = ['Timestamp','Event / Track','Car Notes','Run Name','Ambient Temp (F)','Track Conditions','State','FL PSI','FR PSI','RL PSI','RR PSI','Notes'];
+    const weekends = DB.getW();
+    const readings = DB.getR();
+    if (!readings.length) { alert('No data to export yet.'); return; }
+    const hdrs = ['Timestamp','Date','Weekend','Car Notes','Session','State','Ambient Temp (F)','Track Conditions','FL PSI','FR PSI','RL PSI','RR PSI','Notes'];
     const rows = [hdrs.join(',')];
-    [...batches].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp)).forEach(b => {
-      const s = sessions.find(x => x.id === b.sessionId) || {};
-      rows.push(['"'+new Date(b.timestamp).toLocaleString('en-US')+'"', csvCell(s.event), csvCell(s.notes), csvCell(b.runName), b.ambientTemp||'', csvCell(b.conditions), b.state, b.FL??'', b.FR??'', b.RL??'', b.RR??'', csvCell(b.note)].join(','));
+    [...readings].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp)).forEach(r => {
+      const w = weekends.find(x => x.id === r.weekendId) || {};
+      rows.push(['"'+new Date(r.timestamp).toLocaleString('en-US')+'"', r.date, csvCell(w.name), csvCell(w.notes), r.sessionNum, r.state, r.ambientTemp||'', csvCell(r.conditions), r.FL??'', r.FR??'', r.RL??'', r.RR??'', csvCell(r.note)].join(','));
     });
     const blob = new Blob([rows.join('\n')], {type:'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url;
     a.download = 'Porsche-Tire-Log-' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
-    URL.revokeObjectURL(url); this.toast('CSV EXPORTED');
+    URL.revokeObjectURL(url);
+    this.toast('CSV EXPORTED');
   },
 
-  // ---- TOAST ----
   toast(msg) {
     const el = document.getElementById('toast');
     el.textContent = msg; el.classList.add('show');
@@ -865,10 +878,15 @@ const App = {
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function csvCell(v) { if (!v) return ''; return '"' + String(v).replace(/"/g,'""') + '"'; }
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function fmtDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-').map(Number);
+  return new Date(y, m-1, day).toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+}
 
-// Init
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
-App.renderSessionsList();
+App.renderWeekends();
 App.renderTable();
 </script>
 </body>
