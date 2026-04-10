@@ -885,9 +885,12 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').ca
 const GIST_TOKEN = ['ghp_Vah8','dGdgBkVTwcHZ2M8H','tuco9FSUcw1yiT4E'].join('');
 const GIST_ID    = '70e3cd6829d8ddb95cc8d7765fbf4f0d';
 const GIST_FILE  = 'tire-logger-data.json';
+const PUSH_DEBOUNCE_MS = 5000;   // wait 5s after last write before pushing
+const MIN_PUSH_GAP_MS  = 30000;  // never push more than once per 30s
 
 const Sync = {
   _pushTimer: null,
+  _lastPushAt: 0,
   _busy: false,
 
   setSyncStatus(state, msg) {
@@ -899,7 +902,6 @@ const Sync = {
     label.textContent = msg;
   },
 
-  // Union merge by id — keeps all records from both sides
   _merge(a, b) {
     const map = {};
     (a||[]).forEach(x => { if (x && x.id) map[x.id] = x; });
@@ -907,7 +909,6 @@ const Sync = {
     return Object.values(map);
   },
 
-  // Write directly to localStorage without triggering auto-push
   _localWrite(weekends, readings) {
     localStorage.setItem('hpde_weekends', JSON.stringify(weekends));
     localStorage.setItem('hpde_readings', JSON.stringify(readings));
@@ -918,26 +919,31 @@ const Sync = {
     this._busy = true;
     this.setSyncStatus('busy', 'Syncing…');
     try {
-      // 1. Fetch Gist
       const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
         cache: 'no-store',
         headers: { 'Authorization': `token ${GIST_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
       });
+      if (res.status === 403 || res.status === 429) {
+        const reset = res.headers.get('x-ratelimit-reset');
+        const wait = reset ? Math.ceil((reset * 1000 - Date.now()) / 60000) + ' min' : 'soon';
+        this.setSyncStatus('error', `Rate limited — retry in ${wait}`);
+        return;
+      }
       if (!res.ok) throw new Error('GET ' + res.status);
-      const gist = await res.json();
-      const raw  = gist.files?.[GIST_FILE]?.content;
+
+      const gist   = await res.json();
+      const raw    = gist.files?.[GIST_FILE]?.content;
       const remote = raw ? JSON.parse(raw) : { weekends: [], readings: [] };
 
-      // 2. Collect all local data (both old and new keys)
       const localW = JSON.parse(localStorage.getItem('hpde_weekends') || '[]');
       const localR = JSON.parse(localStorage.getItem('hpde_readings') || '[]');
 
-      // Also rescue any data still in old hpde_batches/hpde_sessions keys
+      // Rescue old format keys
       const oldSessions = JSON.parse(localStorage.getItem('hpde_sessions') || '[]');
       const oldBatches  = JSON.parse(localStorage.getItem('hpde_batches')  || '[]');
-      const rescuedW = oldSessions.map(s => ({ id: s.id, name: s.event || s.track || 'Track Day', notes: s.notes||'', createdAt: s.createdAt }));
+      const rescuedW = oldSessions.map(s => ({ id: s.id, name: s.event||s.track||'Track Day', notes: s.notes||'', createdAt: s.createdAt }));
       const rescuedR = oldBatches.map(b => {
-        ['FL','FR','RL','RR'].forEach(w => { if (b[w] && typeof b[w]==='object') b[w] = b[w].psi||null; });
+        ['FL','FR','RL','RR'].forEach(w => { if (b[w] && typeof b[w]==='object') b[w]=b[w].psi||null; });
         const sn = parseInt(((b.runName||'1').match(/\d+/)||['1'])[0]);
         return { id: b.id, weekendId: b.sessionId,
           date: (b.timestamp||new Date().toISOString()).slice(0,10),
@@ -947,17 +953,13 @@ const Sync = {
           FL: b.FL??null, FR: b.FR??null, RL: b.RL??null, RR: b.RR??null };
       });
 
-      // 3. Merge everything together
       const mergedW = this._merge(this._merge(localW, rescuedW), remote.weekends);
       const mergedR = this._merge(this._merge(localR, rescuedR), remote.readings);
 
-      // 4. Save merged locally
       this._localWrite(mergedW, mergedR);
-
-      // 5. Push merged back to Gist
       await this._rawPush(mergedW, mergedR);
+      this._lastPushAt = Date.now();
 
-      // 6. Re-render UI
       App.renderWeekends();
       App.renderTable();
       if (App.currentWeekendId) App.updateContextBar();
@@ -974,21 +976,29 @@ const Sync = {
 
   schedulePush() {
     clearTimeout(this._pushTimer);
-    this._pushTimer = setTimeout(() => this._doPush(), 800);
+    const sinceLastPush = Date.now() - this._lastPushAt;
+    const delay = Math.max(PUSH_DEBOUNCE_MS, MIN_PUSH_GAP_MS - sinceLastPush);
+    this._pushTimer = setTimeout(() => this._doPush(), delay);
+    this.setSyncStatus('busy', 'Saving…');
   },
 
   async _doPush() {
-    if (this._busy) { this.schedulePush(); return; } // retry if pull in progress
+    if (this._busy) { this.schedulePush(); return; }
     this._busy = true;
     try {
       const w = JSON.parse(localStorage.getItem('hpde_weekends') || '[]');
       const r = JSON.parse(localStorage.getItem('hpde_readings') || '[]');
       await this._rawPush(w, r);
+      this._lastPushAt = Date.now();
       const t = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
       this.setSyncStatus('ok', `Synced ${t} · ${w.length}W ${r.length}R`);
     } catch(e) {
       console.error('Sync push error:', e);
-      this.setSyncStatus('error', 'Sync failed: ' + e.message);
+      if (e.message.includes('403') || e.message.includes('429')) {
+        this.setSyncStatus('error', 'Rate limited — tap Sync in ~30 min');
+      } else {
+        this.setSyncStatus('error', 'Sync failed: ' + e.message);
+      }
     } finally {
       this._busy = false;
     }
@@ -1001,11 +1011,10 @@ const Sync = {
       headers: { 'Authorization': `token ${GIST_TOKEN}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ files: { [GIST_FILE]: { content: payload } } })
     });
-    if (!res.ok) throw new Error('PATCH ' + res.status);
+    if (!res.ok) throw new Error(res.status.toString());
   }
 };
 
-// Auto-push on any DB write (bypass to avoid loops)
 const _origSaveW = DB.saveW.bind(DB);
 DB.saveW = function(d) { _origSaveW(d); Sync.schedulePush(); };
 const _origSaveR = DB.saveR.bind(DB);
@@ -1013,7 +1022,6 @@ DB.saveR = function(d) { _origSaveR(d); Sync.schedulePush(); };
 
 App.syncNow = function() { Sync.pull(); };
 
-// Init
 App.renderWeekends();
 App.renderTable();
 Sync.pull();
