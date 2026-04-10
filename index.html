@@ -133,8 +133,26 @@
     td.td-psi.hot  { color: var(--orange); }
     td.td-psi.empty { color: var(--text-dim); font-weight: 400; font-size: 11px; }
     td.td-notes { color: var(--text-muted); font-size: 11px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
-    td.td-del { padding: 4px 8px; }
+    td.td-actions { padding: 4px 6px; white-space: nowrap; }
     .del-btn { background: none; border: none; color: var(--red); font-size: 17px; cursor: pointer; padding: 4px; }
+    .edit-btn { background: none; border: none; color: var(--blue); font-size: 14px; cursor: pointer; padding: 4px; }
+
+    /* EDIT MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); z-index: 50;
+      align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px 16px 0 0; padding: 20px 16px;
+      width: 100%; max-width: 600px;
+      max-height: 90vh; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .modal-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 0 4px; }
 
     /* LOG FORM */
     .log-form-card {
@@ -361,6 +379,55 @@
   </div>
 </div>
 
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">
+      <span>✏️ Edit Reading</span>
+      <button class="modal-close" onclick="App.closeEdit()">×</button>
+    </div>
+    <div class="form-group">
+      <label>Run Name</label>
+      <input type="text" id="edit-run-name" placeholder="e.g. Run 1">
+    </div>
+    <div class="hc-record-toggle" style="margin-bottom:14px">
+      <button class="hc-record-btn cold" id="edit-hc-cold" onclick="App.setEditHC('cold')">❄️ Cold — Before</button>
+      <button class="hc-record-btn hot" id="edit-hc-hot" onclick="App.setEditHC('hot')">🔥 Hot — After</button>
+    </div>
+    <div class="input-tire-grid">
+      <div class="input-tire-cell">
+        <div class="itc-label">⬅ Front Left</div>
+        <input type="number" id="edit-FL" step="0.5" min="0" max="60" placeholder="0.0">
+        <div class="psi-label">PSI</div>
+      </div>
+      <div class="input-tire-cell">
+        <div class="itc-label">Front Right ➡</div>
+        <input type="number" id="edit-FR" step="0.5" min="0" max="60" placeholder="0.0">
+        <div class="psi-label">PSI</div>
+      </div>
+      <div class="input-tire-cell">
+        <div class="itc-label">⬅ Rear Left</div>
+        <input type="number" id="edit-RL" step="0.5" min="0" max="60" placeholder="0.0">
+        <div class="psi-label">PSI</div>
+      </div>
+      <div class="input-tire-cell">
+        <div class="itc-label">Rear Right ➡</div>
+        <input type="number" id="edit-RR" step="0.5" min="0" max="60" placeholder="0.0">
+        <div class="psi-label">PSI</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Notes</label>
+      <input type="text" id="edit-notes" placeholder="">
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" onclick="App.saveEdit()">Save Changes</button>
+      <button class="btn btn-secondary btn-sm" style="border-color:var(--red);color:var(--red);width:auto;padding:0 16px" onclick="App.deleteFromEdit()">Delete</button>
+    </div>
+    <div style="height:env(safe-area-inset-bottom,12px)"></div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -563,7 +630,7 @@ const App = {
 
     const tbody = document.getElementById('readings-tbody');
     if (!batches.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet — log one below</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">No readings yet — log one below</td></tr>'; // 9 cols: run, time, state, FL, FR, RL, RR, notes, actions
       return;
     }
 
@@ -598,7 +665,10 @@ const App = {
           <td class="td-state">${stateIcon}</td>
           ${cell('FL')}${cell('FR')}${cell('RL')}${cell('RR')}
           <td class="td-notes">${esc(b.note||'')}</td>
-          <td class="td-del"><button class="del-btn" onclick="App.deleteBatch('${b.id}')">×</button></td>
+          <td class="td-actions">
+            <button class="edit-btn" onclick="App.openEdit('${b.id}')">✏️</button>
+            <button class="del-btn" onclick="App.deleteBatch('${b.id}')">×</button>
+          </td>
         </tr>`;
       });
     });
@@ -608,6 +678,62 @@ const App = {
   deleteBatch(id) {
     if (!confirm('Delete this reading?')) return;
     DB.deleteBatch(id);
+    this.renderTable();
+    this.toast('🗑️ Reading deleted');
+  },
+
+  _editId: null,
+  _editHC: 'cold',
+
+  openEdit(id) {
+    const b = DB.getBatches().find(b => b.id === id);
+    if (!b) return;
+    this._editId = id;
+    document.getElementById('edit-run-name').value = b.runName || '';
+    document.getElementById('edit-notes').value = b.note || '';
+    ['FL','FR','RL','RR'].forEach(w => {
+      document.getElementById('edit-'+w).value = (b[w] !== null && b[w] !== undefined) ? b[w] : '';
+    });
+    this.setEditHC(b.state || 'cold');
+    document.getElementById('edit-modal').classList.add('open');
+  },
+
+  closeEdit() {
+    this._editId = null;
+    document.getElementById('edit-modal').classList.remove('open');
+  },
+
+  setEditHC(state) {
+    this._editHC = state;
+    document.getElementById('edit-hc-cold').classList.toggle('active', state === 'cold');
+    document.getElementById('edit-hc-hot').classList.toggle('active', state === 'hot');
+  },
+
+  saveEdit() {
+    if (!this._editId) return;
+    const batches = DB.getBatches();
+    const idx = batches.findIndex(b => b.id === this._editId);
+    if (idx === -1) return;
+    const b = batches[idx];
+    b.runName = document.getElementById('edit-run-name').value.trim() || b.runName || 'Run 1';
+    b.state = this._editHC;
+    b.note = document.getElementById('edit-notes').value.trim();
+    ['FL','FR','RL','RR'].forEach(w => {
+      const v = document.getElementById('edit-'+w).value;
+      b[w] = v !== '' ? parseFloat(v) : null;
+    });
+    batches[idx] = b;
+    DB.saveBatches(batches);
+    this.closeEdit();
+    this.renderTable();
+    this.toast('✅ Reading updated');
+  },
+
+  deleteFromEdit() {
+    if (!this._editId) return;
+    if (!confirm('Delete this reading?')) return;
+    DB.deleteBatch(this._editId);
+    this.closeEdit();
     this.renderTable();
     this.toast('🗑️ Reading deleted');
   },
