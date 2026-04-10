@@ -287,11 +287,11 @@
     </div>
     <div class="form-group">
       <label>Event / Track Name</label>
-      <input type="text" id="nw-name" placeholder="e.g. NCM Motorsports Apr 2026">
+      <input type="text" id="nw-name" placeholder="e.g. VIR 2026-04-10">
     </div>
     <div class="form-group">
       <label>Car / Setup Notes (optional)</label>
-      <textarea id="nw-notes" placeholder="e.g. Michelin PS4S, stock suspension"></textarea>
+      <textarea id="nw-notes" placeholder="e.g. Porsche 992.1 C2S"></textarea>
     </div>
     <button class="btn btn-primary" onclick="App.createWeekend()">Start →</button>
     <div style="height:env(safe-area-inset-bottom,12px)"></div>
@@ -632,8 +632,8 @@ const App = {
 
   // ======= NEW WEEKEND =======
   openNewWeekend() {
-    document.getElementById('nw-name').value = '';
-    document.getElementById('nw-notes').value = '';
+    document.getElementById('nw-name').value = 'VIR ' + todayStr();
+    document.getElementById('nw-notes').value = 'Porsche 992.1 C2S';
     document.getElementById('modal-new-weekend').classList.add('open');
   },
   closeNewWeekend() { document.getElementById('modal-new-weekend').classList.remove('open'); },
@@ -699,8 +699,8 @@ const App = {
 
     ['FL','FR','RL','RR'].forEach(w => document.getElementById('lr-'+w).value = '');
     document.getElementById('lr-notes').value = '';
-    document.getElementById('lr-temp').value = '';
-    document.getElementById('lr-conditions').value = 'Dry';
+    document.getElementById('lr-temp').value = this._lastTemp || '';
+    document.getElementById('lr-conditions').value = this._lastConditions || 'Dry';
     this.updateLrCells();
     document.getElementById('modal-log').classList.add('open');
   },
@@ -763,6 +763,8 @@ const App = {
       if (r[w] !== null) hasAny = true;
     });
     if (!hasAny) { alert('Enter at least one tire pressure.'); return; }
+    this._lastTemp = document.getElementById('lr-temp').value;
+    this._lastConditions = document.getElementById('lr-conditions').value;
     const wasCold = this.lrHCState === 'cold';
     DB.addR(r);
 
