@@ -228,6 +228,47 @@
     .bottom-pad { height: env(safe-area-inset-bottom, 20px); }
     .flex-between { display: flex; align-items: center; justify-content: space-between; }
     .section-label { font-size: 10px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 0.6px; }
+
+    /* SESSION MODAL — paired cold+hot entry */
+    .sess-section { margin-bottom: 10px; }
+    .sess-section-hdr {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 6px 10px; border-radius: 4px; margin-bottom: 8px;
+    }
+    .sess-section-hdr.cold { background: rgba(88,166,255,0.12); color: var(--blue); border-left: 3px solid var(--blue); }
+    .sess-section-hdr.hot  { background: rgba(213,0,28,0.10); color: var(--red);  border-left: 3px solid var(--red); }
+    .tic-mini {
+      background: var(--bg); border: 1px solid var(--border); border-top: 3px solid var(--border);
+      border-radius: 5px; padding: 6px 5px 4px; transition: border-top-color 0.15s;
+    }
+    .tic-mini.cold-state { border-top-color: var(--blue); }
+    .tic-mini.hot-state  { border-top-color: var(--red); }
+    .tic-mini .itc-label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .tic-mini input { font-size: 20px; font-weight: 800; text-align: center; padding: 4px 2px; min-height: 40px; }
+    .target-dev { text-align: center; font-size: 10px; font-weight: 700; min-height: 14px; margin-top: 2px; letter-spacing: 0.3px; }
+    .target-dev.ok   { color: #3fb950; }
+    .target-dev.warn { color: #d29922; }
+    .target-dev.over { color: var(--red); }
+    .delta-strip-hdr {
+      text-align: center; font-size: 9px; font-weight: 800; color: var(--gold);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px;
+    }
+    .delta-strip {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+      background: rgba(197,160,40,0.07); border: 1px dashed rgba(197,160,40,0.3);
+      border-radius: 6px; padding: 8px; margin-bottom: 10px;
+    }
+    .delta-cell { text-align: center; padding: 3px 0; }
+    .delta-cell .dc-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; }
+    .delta-cell .dc-val { font-size: 17px; font-weight: 900; margin-top: 2px; }
+    .dc-val.dpos  { color: #ff6b6b; }
+    .dc-val.dneg  { color: var(--blue); }
+    .dc-val.dzero { color: var(--text-dim); }
+    .delta-avgs { display: flex; justify-content: center; gap: 18px; margin-top: 4px; font-size: 11px; color: var(--text-muted); }
+    .delta-avgs span { font-weight: 700; }
+    .sess-save-row { display: flex; gap: 8px; margin-top: 2px; }
+    .sess-save-row .btn { flex: 1; }
   </style>
 </head>
 <body>
@@ -248,7 +289,7 @@
     <!-- Action buttons -->
     <div style="display:flex;gap:8px;margin-bottom:8px">
       <button class="btn btn-primary" style="flex:1" onclick="App.openNewWeekend()">+ New Track Day/Weekend</button>
-      <button class="btn btn-gold" id="btn-log" onclick="App.openLogReading()" style="flex:1;display:none">Log Reading</button>
+      <button class="btn btn-gold" id="btn-log" onclick="App.openSession()" style="flex:1;display:none">Log Session</button>
     </div>
     <button class="btn btn-secondary btn-sm" onclick="App.exportCSV()" style="width:100%;margin-bottom:14px">Export CSV</button>
 
@@ -464,6 +505,133 @@
     </div>
     <div style="height:env(safe-area-inset-bottom,12px)"></div>
   </div>
+  </div>
+</div>
+
+<!-- ===== SESSION MODAL (paired cold + hot) ===== -->
+<div class="modal-overlay" id="modal-session">
+  <div class="modal">
+    <div class="modal-photo-strip"><img src="track-photo.jpg" alt=""></div>
+    <div class="modal-inner">
+      <div class="modal-title">
+        <span id="sess-title">Session 1</span>
+        <button class="modal-close" onclick="App.closeSession()">×</button>
+      </div>
+
+      <!-- Date + session number -->
+      <div class="row" style="margin-bottom:12px">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="sess-date" onchange="App.onSessDateChange()">
+        </div>
+        <div class="form-group" style="flex:0 0 90px">
+          <label>Session #</label>
+          <input type="number" id="sess-num" min="1" step="1" style="text-align:center;color:var(--gold);font-weight:900;font-size:18px" onchange="App.onSessNumChange()">
+        </div>
+      </div>
+
+      <!-- BEFORE section -->
+      <div class="sess-section">
+        <div class="sess-section-hdr cold">❄️ Before — Cold Pressures</div>
+        <div class="tire-inputs-grid">
+          <div class="tic-mini cold-state">
+            <div class="itc-label">← Front Left</div>
+            <input type="number" id="s-cold-FL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateSessionDeltas()">
+            <div class="psi-label">PSI</div>
+          </div>
+          <div class="tic-mini cold-state">
+            <div class="itc-label">Front Right →</div>
+            <input type="number" id="s-cold-FR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateSessionDeltas()">
+            <div class="psi-label">PSI</div>
+          </div>
+          <div class="tic-mini cold-state">
+            <div class="itc-label">← Rear Left</div>
+            <input type="number" id="s-cold-RL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateSessionDeltas()">
+            <div class="psi-label">PSI</div>
+          </div>
+          <div class="tic-mini cold-state">
+            <div class="itc-label">Rear Right →</div>
+            <input type="number" id="s-cold-RR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateSessionDeltas()">
+            <div class="psi-label">PSI</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DELTA strip (hidden until any hot value is typed) -->
+      <div id="sess-delta-wrap" style="display:none">
+        <div class="delta-strip-hdr">↕ Heat Build-up (After − Before)</div>
+        <div class="delta-strip">
+          <div class="delta-cell"><div class="dc-label">FL Δ</div><div class="dc-val dzero" id="d-FL">—</div></div>
+          <div class="delta-cell"><div class="dc-label">FR Δ</div><div class="dc-val dzero" id="d-FR">—</div></div>
+          <div class="delta-cell"><div class="dc-label">RL Δ</div><div class="dc-val dzero" id="d-RL">—</div></div>
+          <div class="delta-cell"><div class="dc-label">RR Δ</div><div class="dc-val dzero" id="d-RR">—</div></div>
+        </div>
+        <div class="delta-avgs" id="sess-delta-avgs"></div>
+      </div>
+
+      <!-- AFTER section -->
+      <div class="sess-section">
+        <div class="sess-section-hdr hot">🔥 After — Hot Pressures <span style="font-size:9px;font-weight:400;opacity:0.7;margin-left:4px">(optional — fill after track)</span></div>
+        <div class="tire-inputs-grid">
+          <div class="tic-mini hot-state">
+            <div class="itc-label">← Front Left</div>
+            <input type="number" id="s-hot-FL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateSessionDeltas()">
+            <div class="psi-label">PSI</div>
+            <div class="target-dev" id="td-FL"></div>
+          </div>
+          <div class="tic-mini hot-state">
+            <div class="itc-label">Front Right →</div>
+            <input type="number" id="s-hot-FR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateSessionDeltas()">
+            <div class="psi-label">PSI</div>
+            <div class="target-dev" id="td-FR"></div>
+          </div>
+          <div class="tic-mini hot-state">
+            <div class="itc-label">← Rear Left</div>
+            <input type="number" id="s-hot-RL" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateSessionDeltas()">
+            <div class="psi-label">PSI</div>
+            <div class="target-dev" id="td-RL"></div>
+          </div>
+          <div class="tic-mini hot-state">
+            <div class="itc-label">Rear Right →</div>
+            <input type="number" id="s-hot-RR" step="0.5" min="0" max="60" placeholder="0.0" oninput="App.updateSessionDeltas()">
+            <div class="psi-label">PSI</div>
+            <div class="target-dev" id="td-RR"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Target hot PSI + conditions -->
+      <div class="row" style="margin-bottom:10px">
+        <div class="form-group">
+          <label>Target Hot PSI</label>
+          <input type="number" id="sess-target" step="0.5" min="0" max="60" placeholder="e.g. 33.0" oninput="App.updateSessionDeltas()">
+        </div>
+        <div class="form-group">
+          <label>Ambient Temp (°F)</label>
+          <input type="number" id="sess-temp" step="1" min="-20" max="130" placeholder="72">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Track Conditions</label>
+        <select id="sess-conditions">
+          <option value="Dry">Dry</option>
+          <option value="Damp">Damp</option>
+          <option value="Wet">Wet</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="sess-notes" placeholder="e.g. Let 1 PSI out after session — fronts running high…"></textarea>
+      </div>
+
+      <div class="sess-save-row">
+        <button class="btn btn-secondary" onclick="App.saveSession('cold')">Save Cold Only</button>
+        <button class="btn btn-primary" id="sess-save-both" onclick="App.saveSession('both')">Save Session</button>
+      </div>
+      <div class="bottom-pad"></div>
+    </div>
   </div>
 </div>
 
@@ -876,6 +1044,170 @@ const App = {
     this.renderWeekends();
     this.updateContextBar();
     this.toast('READING DELETED');
+  },
+
+  // ======= SESSION MODAL (paired cold + hot) =======
+  openSession() {
+    if (!this.currentWeekendId) { alert('Select a Track Day/Weekend first.'); return; }
+    const today = todayStr();
+    const { sessionNum, hcState } = this.calcNextSession(this.currentWeekendId, today);
+    // If the last state was cold (meaning we're mid-session), still open a fresh session
+    // but let the user adjust the session number
+    const nextSess = hcState === 'cold' ? sessionNum : sessionNum;
+
+    document.getElementById('sess-date').value = today;
+    document.getElementById('sess-num').value = nextSess;
+    document.getElementById('sess-title').textContent = 'Log Session ' + nextSess;
+    document.getElementById('sess-temp').value = this._lastTemp || '';
+    document.getElementById('sess-conditions').value = this._lastConditions || 'Dry';
+    document.getElementById('sess-target').value = this._lastTarget || '';
+    ['FL','FR','RL','RR'].forEach(w => {
+      document.getElementById('s-cold-' + w).value = '';
+      document.getElementById('s-hot-' + w).value = '';
+      document.getElementById('d-' + w).textContent = '—';
+      document.getElementById('d-' + w).className = 'dc-val dzero';
+      document.getElementById('td-' + w).textContent = '';
+      document.getElementById('td-' + w).className = 'target-dev';
+    });
+    document.getElementById('sess-notes').value = '';
+    document.getElementById('sess-delta-wrap').style.display = 'none';
+    document.getElementById('sess-delta-avgs').textContent = '';
+    document.getElementById('sess-save-both').textContent = 'Save Session';
+    document.getElementById('modal-session').classList.add('open');
+  },
+
+  closeSession() { document.getElementById('modal-session').classList.remove('open'); },
+
+  onSessDateChange() {
+    const date = document.getElementById('sess-date').value;
+    if (!date) return;
+    const { sessionNum } = this.calcNextSession(this.currentWeekendId, date);
+    document.getElementById('sess-num').value = sessionNum;
+    document.getElementById('sess-title').textContent = 'Log Session ' + sessionNum;
+  },
+
+  onSessNumChange() {
+    const v = parseInt(document.getElementById('sess-num').value);
+    if (!isNaN(v) && v >= 1) document.getElementById('sess-title').textContent = 'Log Session ' + v;
+  },
+
+  updateSessionDeltas() {
+    const wheels = ['FL','FR','RL','RR'];
+    const target = parseFloat(document.getElementById('sess-target').value);
+    const hasTarget = !isNaN(target);
+    let anyHot = false;
+    let frontDeltas = [], rearDeltas = [];
+
+    wheels.forEach(w => {
+      const cold = parseFloat(document.getElementById('s-cold-' + w).value);
+      const hot  = parseFloat(document.getElementById('s-hot-' + w).value);
+      const dEl  = document.getElementById('d-' + w);
+      const tdEl = document.getElementById('td-' + w);
+
+      if (!isNaN(hot)) anyHot = true;
+
+      // Delta (hot − cold)
+      if (!isNaN(cold) && !isNaN(hot)) {
+        const delta = hot - cold;
+        dEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(1);
+        dEl.className = 'dc-val ' + (delta > 0 ? 'dpos' : delta < 0 ? 'dneg' : 'dzero');
+        if (w === 'FL' || w === 'FR') frontDeltas.push(delta);
+        else rearDeltas.push(delta);
+      } else {
+        dEl.textContent = '—';
+        dEl.className = 'dc-val dzero';
+      }
+
+      // Target deviation
+      if (hasTarget && !isNaN(hot)) {
+        const dev = hot - target;
+        const sign = dev >= 0 ? '+' : '';
+        tdEl.textContent = 'vs target: ' + sign + dev.toFixed(1);
+        const abs = Math.abs(dev);
+        tdEl.className = 'target-dev ' + (abs <= 0.5 ? 'ok' : abs <= 1.5 ? 'warn' : 'over');
+      } else {
+        tdEl.textContent = '';
+        tdEl.className = 'target-dev';
+      }
+    });
+
+    // Delta wrap + averages
+    document.getElementById('sess-delta-wrap').style.display = anyHot ? '' : 'none';
+    if (frontDeltas.length || rearDeltas.length) {
+      const avg = arr => arr.length ? (arr.reduce((a,b) => a+b, 0) / arr.length) : null;
+      const fa = avg(frontDeltas), ra = avg(rearDeltas);
+      const fmt = v => v !== null ? (v >= 0 ? '+' : '') + v.toFixed(1) + ' PSI' : '';
+      const parts = [];
+      if (fa !== null) parts.push('Front avg <span>' + fmt(fa) + '</span>');
+      if (ra !== null) parts.push('Rear avg <span>' + fmt(ra) + '</span>');
+      document.getElementById('sess-delta-avgs').innerHTML = parts.join(' · ');
+    } else {
+      document.getElementById('sess-delta-avgs').innerHTML = '';
+    }
+
+    // Update save button label
+    const anyHotNow = wheels.some(w => document.getElementById('s-hot-' + w).value !== '');
+    document.getElementById('sess-save-both').textContent = anyHotNow ? 'Save Cold + Hot' : 'Save Session';
+  },
+
+  saveSession(mode) {
+    if (!this.currentWeekendId) return;
+    const date = document.getElementById('sess-date').value || todayStr();
+    const sessNum = parseInt(document.getElementById('sess-num').value) || 1;
+    const temp = parseFloat(document.getElementById('sess-temp').value) || null;
+    const conditions = document.getElementById('sess-conditions').value;
+    const note = document.getElementById('sess-notes').value.trim();
+    const now = Date.now();
+
+    // Build cold reading
+    const coldR = {
+      id: 'r_' + now + '_c',
+      weekendId: this.currentWeekendId,
+      date, sessionNum: sessNum,
+      timestamp: new Date(now).toISOString(),
+      state: 'cold', ambientTemp: temp, conditions, note
+    };
+    let hasCold = false;
+    ['FL','FR','RL','RR'].forEach(w => {
+      const v = document.getElementById('s-cold-' + w).value;
+      coldR[w] = (v !== '' && !isNaN(parseFloat(v))) ? parseFloat(v) : null;
+      if (coldR[w] !== null) hasCold = true;
+    });
+
+    // Build hot reading
+    const hotR = {
+      id: 'r_' + (now + 1) + '_h',
+      weekendId: this.currentWeekendId,
+      date, sessionNum: sessNum,
+      timestamp: new Date(now + 1).toISOString(),
+      state: 'hot', ambientTemp: temp, conditions, note
+    };
+    let hasHot = false;
+    ['FL','FR','RL','RR'].forEach(w => {
+      const v = document.getElementById('s-hot-' + w).value;
+      hotR[w] = (v !== '' && !isNaN(parseFloat(v))) ? parseFloat(v) : null;
+      if (hotR[w] !== null) hasHot = true;
+    });
+
+    if (!hasCold && !hasHot) { alert('Enter at least one tire pressure.'); return; }
+    if (mode === 'cold' && !hasCold) { alert('Enter at least one cold (before) pressure.'); return; }
+
+    if (hasCold) DB.addR(coldR);
+    if (mode === 'both' && hasHot) DB.addR(hotR);
+
+    this._lastTemp = document.getElementById('sess-temp').value;
+    this._lastConditions = conditions;
+    this._lastTarget = document.getElementById('sess-target').value;
+
+    this.closeSession();
+    this.renderTable();
+    this.renderWeekends();
+    this.updateContextBar();
+
+    const label = hasCold && mode === 'both' && hasHot
+      ? '❄️ + 🔥 SESSION ' + sessNum + ' SAVED'
+      : hasCold ? '❄️ COLD — SESSION ' + sessNum : '🔥 HOT — SESSION ' + sessNum;
+    this.toast(label);
   },
 
   // ======= CSV EXPORT =======
