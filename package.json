@@ -1,0 +1,17 @@
+{
+  "name": "hpde-tire-logger",
+  "version": "2.0.0",
+  "description": "HPDE Tire Pressure Logger — multi-user, GitHub-backed",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
